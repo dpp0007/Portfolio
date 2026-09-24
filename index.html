@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Deepankar Patel — Vol. 01</title>
+  <meta name="description" content="Deepankar Patel — creative developer, UI/UX designer and AI builder. An interactive manga-style portfolio: projects, journey, skills and hackathon arcs." />
+  <meta name="theme-color" content="#f2ede3" />
+  <meta property="og:title" content="Deepankar Patel — Vol. 01" />
+  <meta property="og:description" content="Creative developer · designer · builder. Read the story." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=JetBrains+Mono:wght@400;600&family=Shippori+Mincho+B1:wght@700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script>
+    /* Apply the saved theme before first paint */
+    (function () {
+      try {
+        var t = localStorage.getItem("dp-theme");
+        if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============================== OPENING SEQUENCE ============================== -->
+  <div class="opening" id="opening" role="dialog" aria-modal="true" aria-labelledby="opening-title">
+    <div class="opening__lines" data-speedlines="140" aria-hidden="true"></div>
+    <div class="opening__shard opening__shard--a" aria-hidden="true"></div>
+    <div class="opening__shard opening__shard--b" aria-hidden="true"></div>
+    <div class="opening__shard opening__shard--c" aria-hidden="true"></div>
+    <div class="opening__cover">
+      <p class="opening__vol mono">VOL. 01 · 第一巻</p>
+      <h1 class="opening__title" id="opening-title">
+        <span>Deepankar</span>
+        <span>Patel</span>
+      </h1>
+      <p class="opening__sub">The Builder Arc</p>
+      <button class="opening__start" id="opening-start" type="button">
+        <span class="opening__play" aria-hidden="true"></span>
+        Start the story
+      </button>
+      <button class="opening__skip mono" id="opening-skip" type="button">Skip intro</button>
+    </div>
+  </div>
+
+  <!-- ============================== NAVIGATION ============================== -->
+  <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+
+  <header class="topbar" id="topbar">
+    <a class="stamp" href="#home" aria-label="Deepankar Patel — back to top">
+      <span>DP</span>
+    </a>
+    <div class="topbar__chapter mono" aria-live="polite">
+      <span class="topbar__num" id="chapter-num">00</span>
+      <span class="topbar__sep" aria-hidden="true">/</span>
+      <span class="topbar__name" id="chapter-name">Prologue</span>
+    </div>
+    <div class="topbar__actions">
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+      </button>
+      <button class="index-btn" id="index-open" type="button" aria-expanded="false" aria-controls="index">
+        <span class="index-btn__bars" aria-hidden="true"><i></i><i></i></span>
+        <span class="mono">Index</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="rail" aria-label="Chapters">
+    <ol id="rail-list"></ol>
+  </nav>
+
+  <div class="index" id="index" role="dialog" aria-modal="true" aria-label="Table of contents" hidden>
+    <div class="index__head">
+      <p class="mono">Table of contents · 目次</p>
+      <button class="index__close" id="index-close" type="button" aria-label="Close index">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <ol class="index__grid" id="index-list"></ol>
+  </div>
+
+  <div class="cursor" aria-hidden="true"><span></span></div>
+
+  <main id="main">
+    <!-- ============================== 00 · HERO ============================== -->
+    <section class="chapter hero" id="home" data-chapter="00" data-title="Prologue" data-label="Home" data-kanji="序章">
+      <div class="hero__page">
+        <div class="panel hero__title reveal" data-parallax="6">
+          <div class="speedlines" data-speedlines="90" aria-hidden="true"></div>
+          <p class="hero__kicker mono">Vol. 01 — A builder's story</p>
+          <h2 class="hero__name" aria-label="Deepankar Patel">
+            <span class="hero__line" data-split>Deepankar</span>
+            <span class="hero__line hero__line--outline" data-split>Patel</span>
+          </h2>
+          <p class="hero__role">
+            <span class="hero__role-label mono">Class:</span>
+            <span class="hero__role-text" id="role-rotator">Creative Developer</span>
+          </p>
+          <div class="bubble bubble--hero" id="hero-bubble">
+            <p></p>
+          </div>
+          <div class="hero__cta">
+            <a class="btn btn--primary" href="#about">Start reading <span aria-hidden="true">↓</span></a>
+            <a class="btn btn--ghost" href="#projects">Jump to projects</a>
+          </div>
+        </div>
+
+        <div class="panel hero__eye reveal" data-parallax="-10">
+          <div class="speedlines speedlines--focus" data-speedlines="70" aria-hidden="true"></div>
+          <svg class="eye" viewBox="0 0 400 260" role="img" aria-label="Manga close-up of a determined eye that follows your cursor">
+            <defs>
+              <pattern id="tone" width="6" height="6" patternUnits="userSpaceOnUse">
+                <circle cx="3" cy="3" r="1.3" class="tone-dot" />
+              </pattern>
+              <pattern id="tone-fine" width="4" height="4" patternUnits="userSpaceOnUse">
+                <circle cx="2" cy="2" r=".9" class="tone-dot-light" />
+              </pattern>
+              <clipPath id="eye-clip">
+                <path d="M46 150 C 110 70, 280 48, 356 128 C 300 196, 150 214, 46 150 Z" />
+              </clipPath>
+            </defs>
+            <!-- brow -->
+            <path class="eye__brow" d="M52 78 C 120 50, 220 26, 352 44 L 348 58 C 230 46, 140 66, 60 96 Z" />
+            <g class="eye__ball">
+              <path class="eye__white" d="M46 150 C 110 70, 280 48, 356 128 C 300 196, 150 214, 46 150 Z" />
+              <g clip-path="url(#eye-clip)">
+                <g class="eye__iris" id="eye-iris">
+                  <circle cx="200" cy="132" r="66" class="eye__iris-outer" />
+                  <circle cx="200" cy="132" r="52" fill="url(#tone)" />
+                  <path d="M150 150 A 52 52 0 0 0 250 150 Z" class="eye__iris-glow" />
+                  <circle cx="200" cy="132" r="24" class="eye__pupil" />
+                  <ellipse cx="226" cy="104" rx="15" ry="12" class="eye__shine" />
+                  <circle cx="178" cy="160" r="6" class="eye__shine" />
+                </g>
+                <!-- lid shadow -->
+                <path d="M40 150 C 110 70, 280 48, 360 128 L 360 110 C 280 30, 110 50, 40 130 Z" fill="url(#tone)" />
+              </g>
+              <!-- lash line -->
+              <path class="eye__lash" d="M40 154 C 104 72, 282 44, 362 126 L 380 116 M 330 92 L 352 70 M 302 76 L 316 52" />
+              <path class="eye__lower" d="M120 188 C 190 204, 270 190, 330 150" />
+            </g>
+            <!-- hatch -->
+            <g class="eye__hatch">
+              <path d="M150 222 l 14 -10 M 170 226 l 14 -10 M 190 228 l 14 -10 M 210 228 l 14 -10 M 230 226 l 14 -10" />
+            </g>
+          </svg>
+          <p class="narration">Greater Noida, 2026. A student who builds like every round is the final round.</p>
+        </div>
+
+        <div class="panel hero__stats reveal" data-parallax="4">
+          <ul class="hero__stat-list">
+            <li><strong>2×</strong><span>1st place</span></li>
+            <li><strong>5</strong><span>podiums</span></li>
+            <li><strong>10+</strong><span>hackathons</span></li>
+          </ul>
+        </div>
+
+        <p class="hero__vertical" aria-hidden="true">ディーパンカル・パテル</p>
+      </div>
+      <a class="scroll-cue mono" href="#about" aria-label="Scroll to chapter one">
+        <span>Scroll to read</span><i aria-hidden="true"></i>
+      </a>
+    </section>
+
+    <!-- ============================== 01 · ABOUT ============================== -->
+    <section class="chapter about" id="about" data-chapter="01" data-title="Character Profile" data-label="About" data-kanji="第一話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">01</span>
+        <div>
+          <p class="chapter__kanji">第一話 <span class="mono">· Episode 1</span></p>
+          <h2 class="chapter__title">Character Profile</h2>
+          <p class="chapter__sub">Who I am, how I work, and what I build.</p>
+        </div>
+      </header>
+
+      <div class="profile" id="profile"></div>
+    </section>
+
+    <!-- ============================== 02 · PROJECTS ============================== -->
+    <section class="chapter projects" id="projects" data-chapter="02" data-title="The Chapters" data-label="Projects" data-kanji="第二話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">02</span>
+        <div>
+          <p class="chapter__kanji">第二話 <span class="mono">· Episode 2</span></p>
+          <h2 class="chapter__title">The Chapters</h2>
+          <p class="chapter__sub">Selected projects. Open a panel to read its story.</p>
+        </div>
+      </header>
+      <div class="project-page" id="project-page"></div>
+    </section>
+
+    <!-- ============================== 03 · JOURNEY ============================== -->
+    <section class="chapter journey" id="journey" data-chapter="03" data-title="The Journey" data-label="Journey" data-kanji="第三話">
+      <div class="journey__pin" id="journey-pin">
+        <header class="chapter__head reveal">
+          <span class="chapter__num" aria-hidden="true">03</span>
+          <div>
+            <p class="chapter__kanji">第三話 <span class="mono">· Episode 3</span></p>
+            <h2 class="chapter__title">The Journey</h2>
+            <p class="chapter__sub">Every milestone is another chapter. <span class="only-desktop">Keep scrolling: the story reads sideways.</span></p>
+          </div>
+          <p class="journey__count mono" aria-hidden="true"><span id="journey-current">01</span> / <span id="journey-total">08</span></p>
+        </header>
+        <div class="journey__viewport">
+          <ol class="journey__track" id="journey-track"></ol>
+        </div>
+        <div class="journey__bar" aria-hidden="true"><span id="journey-bar"></span></div>
+      </div>
+    </section>
+
+    <!-- ============================== 04 · SKILLS ============================== -->
+    <section class="chapter skills" id="skills" data-chapter="04" data-title="Ability Tree" data-label="Skills" data-kanji="第四話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">04</span>
+        <div>
+          <p class="chapter__kanji">第四話 <span class="mono">· Episode 4</span></p>
+          <h2 class="chapter__title">Ability Tree</h2>
+          <p class="chapter__sub">No fake percentages. Every ability links to where it was actually used. Pick one, or filter by chapter.</p>
+        </div>
+      </header>
+      <div class="skill-filter" id="skill-filter" role="group" aria-label="Filter abilities by where they were used"></div>
+      <div class="skill-board" id="skill-board"></div>
+      <div class="skill-scan panel" id="skill-scan" aria-live="polite">
+        <p class="skill-scan__hint mono">▸ Ability scan: select an ability to see where it was unlocked.</p>
+      </div>
+    </section>
+
+    <!-- ============================== 05 · ACHIEVEMENTS ============================== -->
+    <section class="chapter arcs" id="achievements" data-chapter="05" data-title="Arcs Cleared" data-label="Achievements" data-kanji="第五話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">05</span>
+        <div>
+          <p class="chapter__kanji">第五話 <span class="mono">· Episode 5</span></p>
+          <h2 class="chapter__title">Arcs Cleared</h2>
+          <p class="chapter__sub">Hackathon wins, podiums and recognitions: the achievements unlocked so far.</p>
+        </div>
+      </header>
+      <ul class="arc-grid" id="arc-grid"></ul>
+    </section>
+
+    <!-- ============================== 06 · LAB ============================== -->
+    <section class="chapter lab" id="lab" data-chapter="06" data-title="The Studio" data-label="Lab" data-kanji="第六話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">06</span>
+        <div>
+          <p class="chapter__kanji">第六話 <span class="mono">· Episode 6</span></p>
+          <h2 class="chapter__title">The Studio</h2>
+          <p class="chapter__sub">Experiments, studies and side quests from the workbench.</p>
+        </div>
+      </header>
+      <div class="lab__desk">
+        <figure class="lab__live panel reveal">
+          <div class="lab__live-head">
+            <span class="tag tag--accent">Live experiment</span>
+            <button class="lab__clear mono" id="ink-clear" type="button">Clear page</button>
+          </div>
+          <canvas id="ink-canvas" aria-label="Interactive halftone ink canvas. Drag across it to paint with halftone dots."></canvas>
+          <figcaption>
+            <strong>Halftone brush.</strong> Drag or swipe to ink the page. It's the same dot screen that shades the rest of this site.
+          </figcaption>
+        </figure>
+        <ul class="lab__board" id="lab-board"></ul>
+      </div>
+    </section>
+
+    <!-- ============================== 07 · CURRENT ARC ============================== -->
+    <section class="chapter now invert" id="now" data-chapter="07" data-title="Current Arc" data-label="Now" data-kanji="第七話">
+      <div class="marquee" aria-hidden="true"><div class="marquee__inner" id="now-marquee"></div></div>
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">07</span>
+        <div>
+          <p class="chapter__kanji">第七話 <span class="mono">· Episode 7</span></p>
+          <h2 class="chapter__title">Current Arc <span class="onair mono"><i></i>Now inking</span></h2>
+          <p class="chapter__sub" id="now-updated"></p>
+        </div>
+      </header>
+      <div class="now-grid" id="now-grid"></div>
+    </section>
+
+    <!-- ============================== 08 · FINAL ============================== -->
+    <section class="chapter final invert" id="contact" data-chapter="08" data-title="Final Chapter" data-label="Contact" data-kanji="最終話">
+      <div class="speedlines speedlines--final" data-speedlines="160" aria-hidden="true"></div>
+      <div class="final__inner">
+        <p class="chapter__kanji final__kanji">最終話 <span class="mono">· Final Chapter</span></p>
+        <h2 class="final__title reveal">
+          <span>Every season ends</span>
+          <span>on a <em>cliffhanger.</em></span>
+        </h2>
+        <p class="final__lede reveal">Want to build something, collaborate on a hackathon, or just talk design and AI? Let's write the next episode together.</p>
+
+        <div class="final__panels" id="final-panels"></div>
+
+        <div class="final__email reveal">
+          <a class="final__address" id="final-address" href="#"></a>
+          <button class="btn btn--light" id="copy-email" type="button">Copy email</button>
+          <span class="bubble bubble--tiny" id="copy-bubble" role="status"></span>
+        </div>
+
+        <a class="tbc reveal" href="#home" id="tbc">
+          <span class="tbc__text">To be continued</span>
+          <span class="tbc__arrow" aria-hidden="true"></span>
+          <span class="visually-hidden">(back to the start)</span>
+        </a>
+      </div>
+
+      <div class="credits" aria-label="Credits">
+        <div class="credits__roll">
+          <p><span>Story &amp; direction</span>Deepankar Patel</p>
+          <p><span>Interface design</span>Deepankar Patel</p>
+          <p><span>Engineering</span>HTML · CSS · JavaScript</p>
+          <p><span>Screentone</span>Hand-set halftone, 6px</p>
+          <p><span>Special thanks</span>TechnoJam &amp; every hackathon team</p>
+          <p><span>Next volume</span>In production</p>
+        </div>
+      </div>
+
+      <footer class="footer mono">
+        <span>© <span id="year">2026</span> Deepankar Patel</span>
+        <button class="footer__replay" id="replay" type="button">↺ Replay opening</button>
+      </footer>
+    </section>
+  </main>
+
+  <!-- ============================== CHAPTER READER (project detail) ============================== -->
+  <div class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="reader-title" hidden>
+    <div class="reader__backdrop" data-close></div>
+    <article class="reader__page" id="reader-page" tabindex="-1"></article>
+  </div>
+
+  <noscript>
+    <div class="noscript">
+      <h2>Deepankar Patel</h2>
+      <p>Creative developer, UI/UX designer and AI builder. Enable JavaScript for the full interactive story, or reach me at
+      <a href="mailto:deepankarpatel28@gmail.com">deepankarpatel28@gmail.com</a> ·
+      <a href="https://github.com/dpp0007">GitHub</a> ·
+      <a href="https://www.linkedin.com/in/dpp07/">LinkedIn</a>.</p>
+    </div>
+  </noscript>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
