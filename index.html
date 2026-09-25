@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Deepankar Patel — Vol. 01</title>
+  <meta name="description" content="Deepankar Patel — creative developer, UI/UX designer and AI builder. An interactive manga-style portfolio: projects, journey, skills and hackathon arcs." />
+  <meta name="theme-color" content="#f2ede3" />
+  <meta property="og:title" content="Deepankar Patel — Vol. 01" />
+  <meta property="og:description" content="Creative developer · designer · builder. Read the story." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="assets/fonts/dela-gothic-one-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script>
+    /* Apply the saved theme before first paint */
+    (function () {
+      try {
+        var t = localStorage.getItem("dp-theme");
+        if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============================== OPENING SEQUENCE ============================== -->
+  <div class="opening" id="opening" role="dialog" aria-modal="true" aria-labelledby="opening-title">
+    <div class="opening__lines" aria-hidden="true"><div data-speedlines="160"></div></div>
+    <div class="opening__tone" aria-hidden="true"></div>
+    <p class="opening__side mono" aria-hidden="true"><span>Chapter 00</span><span>Prologue</span></p>
+    <p class="opening__vert" aria-hidden="true" lang="ja">ディーパンカル・パテル</p>
+
+    <div class="opening__stage">
+      <div class="opening__cover" id="opening-cover">
+        <div class="opening__frame opening__frame--outer" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="opening__frame opening__frame--inner" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <span class="opening__stamp" aria-hidden="true">DP</span>
+        <p class="opening__vol mono"><span>Vol. 01</span> <span lang="ja">· 第一巻</span></p>
+        <h1 class="opening__title" id="opening-title" aria-label="Deepankar Patel">
+          <span class="opening__first" data-split>Deepankar</span>
+          <span class="opening__last" data-split>Patel</span>
+        </h1>
+        <p class="opening__sub">The Builder Arc</p>
+        <div class="opening__actions">
+          <button class="opening__start" id="opening-start" type="button">
+            <span class="opening__play" aria-hidden="true"></span>
+            Start the story
+          </button>
+          <button class="opening__skip mono" id="opening-skip" type="button">Skip intro</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="opening__flash" aria-hidden="true"></div>
+    <p class="opening__sfx" aria-hidden="true" lang="ja">ドン！</p>
+    <div class="opening__shard opening__shard--a" aria-hidden="true"></div>
+    <div class="opening__shard opening__shard--b" aria-hidden="true"></div>
+    <div class="opening__shard opening__shard--c" aria-hidden="true"></div>
+  </div>
+
+  <!-- ============================== NAVIGATION ============================== -->
+  <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+
+  <header class="topbar" id="topbar">
+    <a class="stamp" href="#home" aria-label="Deepankar Patel — back to top">
+      <span>DP</span>
+    </a>
+    <div class="topbar__chapter mono" aria-live="polite">
+      <span class="topbar__num" id="chapter-num">00</span>
+      <span class="topbar__sep" aria-hidden="true">/</span>
+      <span class="topbar__name" id="chapter-name">Prologue</span>
+    </div>
+    <div class="topbar__actions">
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+      </button>
+      <button class="index-btn" id="index-open" type="button" aria-expanded="false" aria-controls="index">
+        <span class="index-btn__bars" aria-hidden="true"><i></i><i></i></span>
+        <span class="mono">Index</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="rail" aria-label="Chapters">
+    <ol id="rail-list"></ol>
+  </nav>
+
+  <div class="index" id="index" role="dialog" aria-modal="true" aria-label="Table of contents" hidden>
+    <div class="index__head">
+      <p class="mono">Table of contents · 目次</p>
+      <button class="index__close" id="index-close" type="button" aria-label="Close index">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <ol class="index__grid" id="index-list"></ol>
+  </div>
+
+  <nav class="dock" id="dock" aria-label="Chapter navigation">
+    <button class="dock__btn" id="dock-prev" type="button" aria-label="Previous chapter">‹</button>
+    <button class="dock__mid" id="dock-index" type="button" aria-label="Open table of contents">
+      <span class="dock__num mono" id="dock-num">00</span>
+      <span class="dock__name" id="dock-name">Prologue</span>
+      <span class="dock__bar" aria-hidden="true"><i id="dock-bar"></i></span>
+    </button>
+    <button class="dock__btn" id="dock-next" type="button" aria-label="Next chapter">›</button>
+  </nav>
+
+  <div class="cursor" aria-hidden="true"><span></span></div>
+
+  <main id="main">
+    <!-- ============================== 00 · HERO (key visual) ============================== -->
+    <section class="chapter hero" id="home" data-chapter="00" data-title="Prologue" data-label="Home" data-kanji="序章">
+      <div class="kv" id="kv">
+        <div class="kv__sky" aria-hidden="true"><div class="kv__stars" id="kv-stars"></div></div>
+        <div class="kv__layer" data-depth="0.2" aria-hidden="true"><div class="kv__orb"></div></div>
+        <div class="kv__layer kv__char-layer" data-depth="0.9">
+          <div class="kv__char" id="kv-char">
+            <svg class="kv__hero" id="kv-hero" viewBox="0 0 600 800" aria-hidden="true">
+              <defs>
+                <pattern id="kv-tone" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.3" class="kv__tone-dot" /></pattern>
+                <filter id="kv-glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3" /></filter>
+                <filter id="kv-aura" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7" /></filter>
+                <clipPath id="kv-eye-clip"><path d="M244 311 L 276 309 L 268 327 C 260 330, 252 326, 244 311 Z" /></clipPath>
+                <path id="kv-head-shape" d="M430 150 C 380 112, 300 120, 262 170 C 240 200, 236 235, 242 262 C 244 280, 236 296, 238 306 L 246 322 C 238 336, 222 352, 206 372 L 204 378 C 212 384, 222 388, 228 390 C 226 396, 224 402, 226 406 L 232 410 C 228 414, 226 420, 230 424 C 234 428, 236 432, 234 438 C 232 452, 236 466, 250 474 C 280 490, 316 500, 334 498 L 334 566 L 452 566 C 434 520, 440 470, 452 430 C 470 380, 482 300, 472 232 C 464 192, 452 166, 430 150 Z" />
+                <path id="kv-hair-shape" d="M262 300 L 218 318 L 250 268 L 196 262 L 238 228 L 204 190 L 252 186 L 236 122 L 288 148 L 302 66 L 340 122 L 394 44 L 414 110 L 498 40 L 474 134 L 596 104 L 504 184 L 622 196 L 514 238 L 606 292 L 500 298 L 562 372 L 478 352 L 514 444 L 456 404 L 440 352 L 432 250 L 330 228 Z" />
+                <path id="kv-torso-shape" d="M334 552 C 328 590, 302 610, 280 626 C 220 660, 170 720, 150 800 L 600 800 L 600 640 C 560 610, 482 590, 450 552 Z" />
+              </defs>
+
+              <!-- power aura (behind everything) -->
+              <g class="kv__aura" filter="url(#kv-aura)">
+                <use href="#kv-torso-shape" /><use href="#kv-head-shape" class="kv__aura-head" /><use href="#kv-hair-shape" class="kv__aura-head" />
+              </g>
+
+              <!-- scarf tail -->
+              <path class="kv__scarf kv__scarf-tail" d="M438 548 C 500 520, 560 548, 624 516 C 690 484, 730 506, 790 468 L 800 506 C 740 546, 690 528, 632 562 C 570 596, 500 586, 444 584 Z">
+                <animate id="kv-scarf-anim" attributeName="d" dur="2.6s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1; .45 0 .55 1"
+                  values="M438 548 C 500 520, 560 548, 624 516 C 690 484, 730 506, 790 468 L 800 506 C 740 546, 690 528, 632 562 C 570 596, 500 586, 444 584 Z;
+                          M438 548 C 500 540, 560 512, 624 530 C 690 548, 730 494, 790 500 L 800 540 C 740 534, 690 586, 632 572 C 570 558, 500 606, 444 584 Z;
+                          M438 548 C 500 520, 560 548, 624 516 C 690 484, 730 506, 790 468 L 800 506 C 740 546, 690 528, 632 562 C 570 596, 500 586, 444 584 Z" />
+              </path>
+
+              <g class="kv__torso">
+                <use href="#kv-torso-shape" class="kv__body" />
+              </g>
+
+              <!-- head turns toward the cursor -->
+              <g class="kv__head" id="kv-head">
+                <use href="#kv-head-shape" class="kv__body" />
+                <g class="kv__hair">
+                  <use href="#kv-hair-shape" class="kv__body" />
+                  <path class="kv__strand" d="M488 150 L 640 128 L 500 186 Z" />
+                  <path class="kv__strand kv__strand--2" d="M496 262 L 640 300 L 494 300 Z" />
+                </g>
+                <!-- ear + headphones: a developer never leaves home without them -->
+                <path class="kv__phones" d="M300 196 C 360 150, 452 168, 470 250" />
+                <rect class="kv__cup" x="366" y="298" width="42" height="64" rx="16" transform="rotate(-12 387 330)" />
+                <path class="kv__cup-rim" d="M372 306 C 364 324, 366 346, 378 360" />
+                <!-- rim light -->
+                <path class="kv__rim" d="M238 306 L 246 322 C 238 336, 222 352, 206 372 L 204 378 C 212 384, 222 388, 228 390 C 226 396, 224 402, 226 406 L 232 410 C 228 414, 226 420, 230 424 C 234 428, 236 432, 234 438 C 232 452, 236 466, 250 474 C 280 490, 316 500, 334 498" />
+                <path class="kv__rim kv__rim--glow" d="M238 306 L 246 322 C 238 336, 222 352, 206 372 L 204 378 C 212 384, 222 388, 228 390 C 226 396, 224 402, 226 406 L 232 410 C 228 414, 226 420, 230 424 C 234 428, 236 432, 234 438 C 232 452, 236 466, 250 474 C 280 490, 316 500, 334 498" />
+                <!-- the eye: sclera wedge, iris that tracks -->
+                <g class="kv__eye" id="kv-eye">
+                  <path class="kv__sclera" d="M244 311 L 276 309 L 268 327 C 260 330, 252 326, 244 311 Z" />
+                  <g clip-path="url(#kv-eye-clip)">
+                    <g class="kv__iris" id="kv-iris">
+                      <circle class="kv__iris-ring" cx="256" cy="318" r="7.5" />
+                      <circle class="kv__pupil" cx="256" cy="318" r="3.4" />
+                      <circle class="kv__glint" cx="253.5" cy="315.5" r="1.8" />
+                    </g>
+                    <rect class="kv__lid" id="kv-lid" x="240" y="300" width="40" height="32" />
+                  </g>
+                  <path class="kv__lash" d="M242 310 L 278 307 L 284 302" />
+                </g>
+              </g>
+
+              <!-- scarf wrap (covers the neck seam) -->
+              <path class="kv__scarf" d="M320 518 C 364 506, 424 516, 456 540 L 450 588 C 412 570, 364 566, 324 580 Z" />
+              <path class="kv__scarf-shade" d="M324 560 C 366 548, 414 552, 452 570 L 450 588 C 412 570, 364 566, 324 580 Z" />
+            </svg>
+            <button class="kv__poke" id="kv-poke" type="button" aria-label="Poke the protagonist: power up and switch class"></button>
+            <p class="kv__speech" id="kv-speech" role="status" aria-live="polite"></p>
+            <span class="kv__hint mono" aria-hidden="true">Tap me</span>
+          </div>
+        </div>
+
+
+        <div class="kv__title">
+          <p class="kv__kicker mono">Episode 00 · The Builder Arc</p>
+          <h2 class="hero__name kv__name" id="hero-name" aria-label="Deepankar Patel">
+            <span class="hero__line" data-split>Deepankar</span>
+            <span class="hero__line hero__line--outline" data-split>Patel</span>
+          </h2>
+          <div class="kv__tagline" id="hero-bubble"><p></p></div>
+
+          <div class="kv__class" id="kv-class">
+            <p class="kv__class-desc" id="kv-class-desc" aria-live="polite"></p>
+            <div class="kv__class-tabs" id="kv-class-tabs" role="tablist" aria-label="Class"></div>
+            <span class="kv__class-count" id="kv-class-count" hidden></span>
+          </div>
+
+          <div class="kv__cta">
+            <a class="kv-cta kv-cta--primary" href="#about">Start reading <span aria-hidden="true">↓</span></a>
+            <a class="kv-cta kv-cta--ghost" href="#projects">View projects <span aria-hidden="true">→</span></a>
+          </div>
+
+          <p class="kv__stats mono"><b>2×</b> 1st place <i>·</i> <b>5</b> podiums <i>·</i> <b>10+</b> hackathons</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== 01 · ABOUT ============================== -->
+    <section class="chapter about" id="about" data-chapter="01" data-title="Character Profile" data-label="About" data-kanji="第一話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">01</span>
+        <div>
+          <p class="chapter__kanji">第一話 <span class="mono">· Episode 1</span></p>
+          <h2 class="chapter__title">Character Profile</h2>
+          <p class="chapter__sub">Who I am, how I work, and what I build.</p>
+        </div>
+      </header>
+
+      <div class="profile" id="profile"></div>
+    </section>
+
+    <!-- ============================== 02 · PROJECTS ============================== -->
+    <section class="chapter projects" id="projects" data-chapter="02" data-title="The Chapters" data-label="Projects" data-kanji="第二話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">02</span>
+        <div>
+          <p class="chapter__kanji">第二話 <span class="mono">· Episode 2</span></p>
+          <h2 class="chapter__title">The Chapters</h2>
+          <p class="chapter__sub">Selected projects. Open a panel to read its story.</p>
+        </div>
+      </header>
+      <div class="project-page" id="project-page"></div>
+    </section>
+
+    <!-- ============================== 03 · JOURNEY ============================== -->
+    <section class="chapter journey" id="journey" data-chapter="03" data-title="The Journey" data-label="Journey" data-kanji="第三話">
+      <div class="journey__pin" id="journey-pin">
+        <header class="chapter__head reveal">
+          <span class="chapter__num" aria-hidden="true">03</span>
+          <div>
+            <p class="chapter__kanji">第三話 <span class="mono">· Episode 3</span></p>
+            <h2 class="chapter__title">The Journey</h2>
+            <p class="chapter__sub">Every milestone is another chapter. <span class="only-desktop">Keep scrolling: the story reads sideways.</span></p>
+          </div>
+          <p class="journey__count mono" aria-hidden="true"><span id="journey-current">01</span> / <span id="journey-total">08</span></p>
+        </header>
+        <div class="journey__viewport">
+          <ol class="journey__track" id="journey-track"></ol>
+        </div>
+        <div class="journey__bar" aria-hidden="true"><span id="journey-bar"></span></div>
+      </div>
+    </section>
+
+    <!-- ============================== 04 · SKILLS ============================== -->
+    <section class="chapter skills" id="skills" data-chapter="04" data-title="Ability Tree" data-label="Skills" data-kanji="第四話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">04</span>
+        <div>
+          <p class="chapter__kanji">第四話 <span class="mono">· Episode 4</span></p>
+          <h2 class="chapter__title">Ability Tree</h2>
+          <p class="chapter__sub">No fake percentages. Every ability links to where it was actually used. Pick one, or filter by chapter.</p>
+        </div>
+      </header>
+      <div class="skill-filter" id="skill-filter" role="group" aria-label="Filter abilities by where they were used"></div>
+      <div class="skill-board" id="skill-board"></div>
+      <div class="skill-scan panel" id="skill-scan" aria-live="polite">
+        <p class="skill-scan__hint mono">▸ Ability scan: select an ability to see where it was unlocked.</p>
+      </div>
+    </section>
+
+    <!-- ============================== 05 · ACHIEVEMENTS ============================== -->
+    <section class="chapter arcs" id="achievements" data-chapter="05" data-title="Arcs Cleared" data-label="Achievements" data-kanji="第五話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">05</span>
+        <div>
+          <p class="chapter__kanji">第五話 <span class="mono">· Episode 5</span></p>
+          <h2 class="chapter__title">Arcs Cleared</h2>
+          <p class="chapter__sub">Hackathon wins, podiums and recognitions: the achievements unlocked so far.</p>
+        </div>
+      </header>
+      <p class="swipe-hint mono" aria-hidden="true">Swipe the cards</p>
+      <ul class="arc-grid" id="arc-grid"></ul>
+    </section>
+
+    <!-- ============================== 06 · LAB ============================== -->
+    <section class="chapter lab" id="lab" data-chapter="06" data-title="The Studio" data-label="Lab" data-kanji="第六話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">06</span>
+        <div>
+          <p class="chapter__kanji">第六話 <span class="mono">· Episode 6</span></p>
+          <h2 class="chapter__title">The Studio</h2>
+          <p class="chapter__sub">Experiments, studies and side quests from the workbench.</p>
+        </div>
+      </header>
+      <div class="lab__desk">
+        <figure class="lab__live panel reveal">
+          <div class="lab__live-head">
+            <span class="tag tag--accent">Live experiment</span>
+            <button class="lab__clear mono" id="ink-clear" type="button">Clear page</button>
+          </div>
+          <canvas id="ink-canvas" aria-label="Interactive halftone ink canvas. Drag across it to paint with halftone dots."></canvas>
+          <figcaption>
+            <strong>Halftone brush.</strong> Drag or swipe to ink the page. It's the same dot screen that shades the rest of this site.
+          </figcaption>
+        </figure>
+        <ul class="lab__board" id="lab-board"></ul>
+      </div>
+    </section>
+
+    <!-- ============================== 07 · CURRENT ARC ============================== -->
+    <section class="chapter now invert" id="now" data-chapter="07" data-title="Current Arc" data-label="Now" data-kanji="第七話">
+      <div class="marquee" aria-hidden="true"><div class="marquee__inner" id="now-marquee"></div></div>
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">07</span>
+        <div>
+          <p class="chapter__kanji">第七話 <span class="mono">· Episode 7</span></p>
+          <h2 class="chapter__title">Current Arc <span class="onair mono"><i></i>Now inking</span></h2>
+          <p class="chapter__sub" id="now-updated"></p>
+        </div>
+      </header>
+      <div class="now-grid" id="now-grid"></div>
+    </section>
+
+    <!-- ============================== 08 · FINAL ============================== -->
+    <section class="chapter final invert" id="contact" data-chapter="08" data-title="Final Chapter" data-label="Contact" data-kanji="最終話">
+      <div class="speedlines speedlines--final" data-speedlines="160" aria-hidden="true"></div>
+      <div class="final__inner">
+        <p class="chapter__kanji final__kanji">最終話 <span class="mono">· Final Chapter</span></p>
+        <h2 class="final__title reveal">
+          <span>Every season ends</span>
+          <span>on a <em>cliffhanger.</em></span>
+        </h2>
+        <p class="final__lede reveal">Want to build something, collaborate on a hackathon, or just talk design and AI? Let's write the next episode together.</p>
+
+        <div class="final__panels" id="final-panels"></div>
+
+        <div class="final__email reveal">
+          <a class="final__address" id="final-address" href="#"></a>
+          <button class="btn btn--light" id="copy-email" type="button">Copy email</button>
+          <span class="bubble bubble--tiny" id="copy-bubble" role="status"></span>
+        </div>
+
+        <a class="tbc reveal" href="#home" id="tbc">
+          <span class="tbc__text">To be continued</span>
+          <span class="tbc__arrow" aria-hidden="true"></span>
+          <span class="visually-hidden">(back to the start)</span>
+        </a>
+      </div>
+
+      <div class="credits" aria-label="Credits">
+        <div class="credits__roll">
+          <p><span>Story &amp; direction</span>Deepankar Patel</p>
+          <p><span>Interface design</span>Deepankar Patel</p>
+          <p><span>Engineering</span>HTML · CSS · JavaScript</p>
+          <p><span>Screentone</span>Hand-set halftone, 6px</p>
+          <p><span>Special thanks</span>TechnoJam &amp; every hackathon team</p>
+          <p><span>Next volume</span>In production</p>
+        </div>
+      </div>
+
+      <footer class="footer mono">
+        <span>© <span id="year">2026</span> Deepankar Patel</span>
+        <button class="footer__replay" id="replay" type="button">↺ Replay opening</button>
+      </footer>
+    </section>
+  </main>
+
+  <!-- ============================== CHAPTER READER (project detail) ============================== -->
+  <div class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="reader-title" hidden>
+    <div class="reader__backdrop" data-close></div>
+    <article class="reader__page" id="reader-page" tabindex="-1"></article>
+  </div>
+
+  <noscript>
+    <div class="noscript">
+      <h2>Deepankar Patel</h2>
+      <p>Creative developer, UI/UX designer and AI builder. Enable JavaScript for the full interactive story, or reach me at
+      <a href="mailto:deepankarpatel28@gmail.com">deepankarpatel28@gmail.com</a> ·
+      <a href="https://github.com/dpp0007">GitHub</a> ·
+      <a href="https://www.linkedin.com/in/dpp07/">LinkedIn</a>.</p>
+    </div>
+  </noscript>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
