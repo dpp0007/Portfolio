@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Portfolio Editor</title>
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="assets/fonts/dela-gothic-one-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="assets/editor/editor.css" />
+</head>
+<body>
+  <header class="ed-top">
+    <a class="ed-stamp" href="index.html" title="Open the site"><span>DP</span></a>
+    <div class="ed-brand">
+      <p class="ed-kicker">Portfolio</p>
+      <h1>Editor</h1>
+    </div>
+    <p class="ed-status" id="ed-status" role="status"><i></i><span>Loading…</span></p>
+    <div class="ed-actions">
+      <button class="ed-btn ed-btn--ghost" id="ed-reset" type="button" title="Throw away the draft and go back to the published content">Discard draft</button>
+      <label class="ed-btn ed-btn--ghost" title="Load a data.js or .json file">Import<input type="file" id="ed-import" accept=".js,.json,application/json,text/javascript" hidden /></label>
+      <button class="ed-btn" id="ed-download" type="button">Download data.js</button>
+      <button class="ed-btn ed-btn--primary" id="ed-publish-open" type="button">Publish</button>
+    </div>
+  </header>
+
+  <div class="ed-tabs" role="tablist" aria-label="View">
+    <button type="button" role="tab" aria-selected="true" data-view="form">Edit</button>
+    <button type="button" role="tab" aria-selected="false" data-view="preview">Preview</button>
+  </div>
+
+  <main class="ed-main" id="ed-main" data-view="form">
+    <nav class="ed-nav" id="ed-nav" aria-label="Sections"></nav>
+    <section class="ed-form" id="ed-form" aria-label="Content"></section>
+    <section class="ed-preview" aria-label="Live preview">
+      <div class="ed-preview__bar">
+        <span class="ed-live"><i></i>Live preview</span>
+        <div class="ed-seg" role="group" aria-label="Preview size">
+          <button type="button" data-size="desktop" aria-pressed="true">Desktop</button>
+          <button type="button" data-size="phone" aria-pressed="false">Phone</button>
+        </div>
+        <button class="ed-link" id="ed-reload" type="button">Reload</button>
+      </div>
+      <div class="ed-frame" id="ed-frame" data-size="desktop">
+        <iframe id="ed-iframe" title="Live preview of the portfolio" src="index.html?preview"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="ed-dialog" id="ed-publish">
+    <form method="dialog" class="ed-dialog__in" id="ed-publish-form">
+      <h2>Publish to the live site</h2>
+      <p class="ed-help">Commits your draft as <code>assets/js/data.js</code> to GitHub. If the site is served from that branch (GitHub Pages, Netlify, Vercel), it updates within a minute or two.</p>
+      <div class="ed-grid2">
+        <label class="ed-field"><span>Owner</span><input name="owner" required /></label>
+        <label class="ed-field"><span>Repository</span><input name="repo" required /></label>
+        <label class="ed-field"><span>Branch</span><input name="branch" required /></label>
+        <label class="ed-field"><span>File path</span><input name="path" required /></label>
+      </div>
+      <label class="ed-field"><span>GitHub token</span><input name="token" type="password" autocomplete="off" required placeholder="github_pat_…" />
+        <small>A fine-grained token with <b>Contents: read and write</b> on this repository only. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Create one ↗</a></small>
+      </label>
+      <label class="ed-check"><input type="checkbox" name="remember" /> Remember the token on this device</label>
+      <label class="ed-field"><span>Commit message</span><input name="message" /></label>
+      <p class="ed-result" id="ed-publish-result" role="status"></p>
+      <div class="ed-dialog__actions">
+        <button class="ed-btn ed-btn--ghost" value="cancel" formnovalidate type="submit">Close</button>
+        <button class="ed-btn ed-btn--primary" id="ed-publish-go" type="button">Publish now</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/editor/editor.js"></script>
+</body>
+</html>

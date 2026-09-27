@@ -30,6 +30,8 @@ window.PORTFOLIO = {
     ],
     // Lines the landing character says when clicked or tapped.
     quips: ["Let's build something.", "One more commit.", "Ship it. Then polish.", "Design first. Then code.", "Hackathon mode: ON.", "Next chapter loading…"],
+    volume: "Vol. 01",
+    arc: "The Builder Arc",
     tagline: "I design the interface, wire up the AI, and build the whole stack underneath.",
     location: "Greater Noida, India",
     email: "deepankarpatel28@gmail.com",
@@ -39,6 +41,16 @@ window.PORTFOLIO = {
     // Leave null to use the illustrated silhouette.
     portrait: null,
     updated: "September 2026",
+  },
+
+  /* ------------------------------------------------------------ THE OPENING
+     The three word slams at the start of the story (one per beat).       */
+  intro: {
+    words: [
+      { word: "DESIGN", caption: "01 · sketch it" },
+      { word: "CODE", caption: "02 · build it" },
+      { word: "SHIP", caption: "03 · launch it" },
+    ],
   },
 
   profile: {

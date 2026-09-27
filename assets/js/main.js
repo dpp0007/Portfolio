@@ -120,26 +120,24 @@
     return (ART[p.art] || ART.generic)();
   }
 
+  // the profile portrait reuses the landing character (one protagonist, one drawing)
   function silhouette() {
-    return '<svg class="sil" viewBox="0 0 300 330" aria-hidden="true"><defs>' +
-      '<pattern id="sil-tone" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.4" style="fill:var(--paper)" opacity=".28"/></pattern></defs>' +
-      // shoulders / hoodie
-      '<path class="sil__body" d="M22 330 C 28 262, 70 238, 118 230 L 182 230 C 230 238, 272 262, 278 330 Z"/>' +
-      '<path class="sil__tone" d="M150 236 C 200 240, 262 262, 270 330 L 150 330 Z"/>' +
-      '<path class="sil__collar" d="M118 232 C 132 262, 168 262, 182 232 M150 256 V 330"/>' +
-      // neck
-      '<path class="sil__body" d="M128 200 H172 L176 240 H124 Z"/>' +
-      // head
-      '<ellipse class="sil__body" cx="150" cy="150" rx="60" ry="72"/>' +
-      // hair
-      '<path class="sil__body" d="M84 168 L 62 120 L 92 124 L 72 70 L 116 94 L 118 36 L 152 82 L 176 30 L 186 88 L 232 60 L 214 110 L 248 112 L 218 150 L 222 176 L 196 128 L 170 138 L 150 118 L 124 140 L 104 128 Z"/>' +
-      '<path class="sil__tone" d="M150 90 L 176 30 L 186 88 L 232 60 L 214 110 L 248 112 L 218 150 L 222 176 L 196 128 L 170 138 Z"/>' +
-      // eyes glint
-      '<path class="sil__eye" d="M112 160 L 138 154 L 136 162 Z"/><path class="sil__eye" d="M188 154 L 162 160 L 164 166 Z"/>' +
-      // rim light
-      '<path class="sil__rim" d="M212 146 C 214 186, 196 214, 170 222"/>' +
-      '<path class="sil__rim" d="M232 268 C 252 282, 266 300, 270 322"/>' +
-      "</svg>";
+    return '<svg class="sil" viewBox="140 70 480 720" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><use href="#kv-figure" /></svg>';
+  }
+
+  /* ============================================================ DATA BINDING
+     Text that appears in the static HTML (name, arc title, stats line) is
+     filled from data.js so one edit updates every place it appears.      */
+  function bindData() {
+    var P = D.person;
+    if (!P.name) P.name = [P.first, P.last].filter(Boolean).join(" ");
+    $$("[data-bind]").forEach(function (el) { var v = P[el.dataset.bind]; if (v != null) el.textContent = v; });
+    $$("[data-bind-label]").forEach(function (el) { var v = P[el.dataset.bindLabel]; if (v != null) el.setAttribute("aria-label", v + (el.dataset.bindSuffix || "")); });
+    document.title = P.name + " — " + (P.volume || "Portfolio");
+    var kv = $("#kv-stats");
+    if (kv) kv.innerHTML = (P.heroStats || []).map(function (x) {
+      return "<b>" + esc(x.value + (x.suffix || "")) + "</b> " + esc(x.label.toLowerCase());
+    }).join(" <i>·</i> ");
   }
 
   /* ============================================================ RENDERERS */
@@ -178,7 +176,7 @@
         "</div>" +
         '<div class="sheet__block panel reveal sheet__block--wide" style="--d:.1s">' +
           '<p class="sheet__label">Backstory</p>' +
-          '<div class="story">' + P.story.map(function (s) { return '<p class="narration">' + esc(s) + "</p>"; }).join("") + "</div>" +
+          '<div class="backstory">' + P.story.map(function (s) { return '<p class="narration">' + esc(s) + "</p>"; }).join("") + "</div>" +
         "</div>" +
         '<div class="sheet__block panel reveal">' +
           '<p class="sheet__label">Traits · working style</p>' +
@@ -446,8 +444,43 @@
   $("#dock-index").addEventListener("click", openIndex);
   function goChapter(d) {
     var t = chapters[clamp(current + d, 0, chapters.length - 1)];
-    if (t) t.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+    if (t) wipeTo(t);
   }
+  /* chapter wipe: every in-page jump between sections gets a manga-panel transition */
+  var wipe = $("#wipe"), wiping = false;
+  function wipeTo(section, focusEl) {
+    var jump = function () {
+      window.scrollTo({ top: section.getBoundingClientRect().top + window.scrollY, behavior: "instant" });
+      if (history.replaceState) history.replaceState(null, "", "#" + section.id);
+    };
+    if (reduce || wiping) { jump(); return; }
+    wiping = true;
+    $("#wipe-kanji").textContent = section.dataset.kanji || "";
+    $("#wipe-num").textContent = section.dataset.chapter || "";
+    $("#wipe-title").textContent = section.dataset.title || "";
+    wipe.classList.remove("is-out");
+    wipe.classList.add("is-active");
+    void wipe.offsetWidth;
+    wipe.classList.add("is-in");
+    Sfx.play("whoosh"); buzz(8);
+    setTimeout(function () { jump(); Sfx.play("hit"); }, 520);
+    setTimeout(function () { wipe.classList.remove("is-in"); wipe.classList.add("is-out"); Sfx.play("swoosh"); }, 820);
+    setTimeout(function () {
+      wipe.classList.remove("is-active", "is-out");
+      wiping = false;
+      if (focusEl) focusEl.focus({ preventScroll: true });
+    }, 1350);
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest('a[href^="#"]');
+    if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || a.classList.contains("skip-link")) return;
+    var id = a.getAttribute("href").slice(1), target = id && document.getElementById(id);
+    if (!target || !target.classList.contains("chapter")) return;
+    if (!opening.hidden || !reader.hidden) return;
+    e.preventDefault();
+    if (!index.hidden) closeIndex(true);
+    wipeTo(target);
+  });
   $("#dock-prev").addEventListener("click", function () { goChapter(-1); });
   $("#dock-next").addEventListener("click", function () { goChapter(1); });
   $("#index-close").addEventListener("click", function () { closeIndex(); });
@@ -474,12 +507,134 @@
     inkRedraw && inkRedraw();
   });
 
+
+  /* ============================================================ SOUND + HAPTICS
+     Every sound is synthesised with Web Audio at play time (no audio files).
+     Sound only starts after a click or tap, and the choice is remembered.   */
+  var Sfx = (function () {
+    var ctx = null, out = null, noiseBuf = null;
+    var on = store("localStorage", "dp-sound") !== "off";
+    function ready() {
+      if (!on) return null;
+      if (!ctx) {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        ctx = new AC();
+        out = ctx.createDynamicsCompressor();
+        var vol = ctx.createGain(); vol.gain.value = 0.55;
+        out.connect(vol); vol.connect(ctx.destination);
+        noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+        var d = noiseBuf.getChannelData(0);
+        for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      }
+      if (ctx.state === "suspended") ctx.resume();
+      return ctx;
+    }
+    function env(g, t, a, d, peak) {
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(peak, t + a);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + a + d);
+    }
+    function tone(type, f0, f1, dur, vol, delay, dest) {
+      var t = ctx.currentTime + (delay || 0), o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+      env(g, t, 0.006, dur, vol); o.connect(g); g.connect(dest || out); o.start(t); o.stop(t + dur + 0.05);
+    }
+    function noise(dur, vol, type, f0, f1, q, delay, dest, attack) {
+      var t = ctx.currentTime + (delay || 0), src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+      src.buffer = noiseBuf; src.loop = true; f.type = type; f.Q.value = q || 1;
+      f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+      env(g, t, attack || Math.min(0.03, dur / 3), dur, vol); src.connect(f); f.connect(g); g.connect(dest || out); src.start(t); src.stop(t + (attack || 0) + dur + 0.05);
+    }
+    /* the OP soundtrack: 150 BPM, A minor (Am F C G), drums + bass + a lead that
+       enters for the hero shot. Everything is scheduled up front on the audio clock. */
+    var music = null;
+    function playOp(startMs, beats, beatMs) {
+      if (!ready()) return;
+      stopOp(true);
+      music = ctx.createGain(); music.gain.value = 1; music.connect(out);
+      var B = (beatMs || 400) / 1000, t0 = startMs / 1000, m = music;
+      var roots = [55, 43.65, 65.41, 49];
+      // build-up into the first beat
+      noise(t0, 0.28, "bandpass", 300, 5000, 1.5, 0, m, t0 * 0.9);
+      for (var i = 0; i < beats; i++) {
+        var t = t0 + i * B, bar = Math.floor(i / 4) % 4, f = roots[bar];
+        tone("sine", 150, 42, 0.28, 0.9, t, m);                              // kick
+        if (i % 2 === 1) { noise(0.16, 0.45, "bandpass", 2200, 1200, 0.9, t, m); tone("triangle", 200, 150, 0.08, 0.2, t, m); } // snare
+        noise(0.035, 0.12, "highpass", 8000, 9000, 1, t, m); noise(0.035, 0.08, "highpass", 8000, 9000, 1, t + B / 2, m); // hats
+        tone("sawtooth", f, f, 0.18, 0.22, t, m); tone("sawtooth", f * 2, f * 2, 0.16, 0.14, t + B / 2, m);            // bass
+        if (i >= 9) {                                                        // lead arpeggio for the hero + title
+          var arp = [4, 4.8, 6, 8], base = f * 2;
+          for (var k = 0; k < 4; k++) tone("square", base * arp[k], base * arp[k], 0.08, 0.07, t + k * B / 4, m);
+        }
+        if (i % 3 === 0) noise(0.9, 0.16, "highpass", 3000, 7000, 0.7, t, m);  // crash on every cut
+      }
+      var end = t0 + beats * B;
+      tone("sine", 110, 38, 0.9, 0.9, end, m); noise(1.4, 0.25, "highpass", 2500, 6000, 0.7, end, m); // final hit
+    }
+    function stopOp(now) {
+      if (!music || !ctx) return;
+      var g = music; music = null;
+      g.gain.setValueAtTime(g.gain.value, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + (now ? 0.02 : 0.25));
+      setTimeout(function () { try { g.disconnect(); } catch (e) {} }, 400);
+    }
+    var bank = {
+      boom: function () { tone("sine", 120, 38, 0.7, 0.9); tone("triangle", 70, 30, 0.5, 0.5); noise(0.4, 0.6, "lowpass", 1400, 90, 0.7); },
+      hit: function () { tone("sine", 170, 55, 0.16, 0.6); noise(0.08, 0.35, "bandpass", 1800, 600, 1.2); },
+      whoosh: function () { noise(0.5, 0.35, "bandpass", 300, 3200, 1.4); },
+      swoosh: function () { noise(0.55, 0.35, "bandpass", 3600, 260, 1.4); },
+      drop: function () { tone("sine", 1300, 260, 0.18, 0.35); },
+      splash: function () { noise(0.22, 0.2, "highpass", 2500, 6000, 0.7); },
+      scribble: function () { for (var k = 0; k < 6; k++) noise(0.05, 0.12, "bandpass", 3000 + Math.random() * 2000, 2400, 3, k * 0.07); },
+      type: function () { for (var k = 0; k < 7; k++) { tone("square", 1900 + Math.random() * 400, 1500, 0.025, 0.08, k * 0.065); noise(0.02, 0.08, "highpass", 4000, 5000, 1, k * 0.065); } },
+      stamp: function () { tone("sine", 140, 45, 0.3, 0.8); noise(0.12, 0.45, "lowpass", 2400, 300, 1); tone("square", 420, 200, 0.05, 0.12); },
+      shing: function () { tone("triangle", 1400, 2800, 0.12, 0.25); tone("sine", 3150, 3100, 0.9, 0.18, 0.05); tone("sine", 4210, 4180, 0.8, 0.12, 0.05); noise(0.3, 0.2, "highpass", 5000, 9000, 1); },
+      sparkle: function () { [1568, 2093, 2637, 3136].forEach(function (f, k) { tone("sine", f, f, 0.22, 0.12, k * 0.06); }); },
+      rise: function () { tone("sawtooth", 110, 440, 0.8, 0.07); noise(0.8, 0.14, "bandpass", 400, 4000, 2); },
+      reveal: function () { [220, 277.2, 329.6, 440, 554.4].forEach(function (f, k) { tone("sine", f, f * 1.002, 1.6, 0.12, k * 0.04); }); noise(0.6, 0.12, "lowpass", 800, 3000, 0.5); },
+      curtain: function () { noise(0.6, 0.3, "bandpass", 2400, 380, 1.1); tone("sine", 196, 262, 0.35, 0.12, 0.15); },
+      blip: function () { tone("square", 880, 1320, 0.07, 0.12); },
+      power: function () { tone("sine", 320, 980, 0.25, 0.3); tone("square", 1320, 1760, 0.08, 0.1, 0.2); noise(0.2, 0.15, "highpass", 3000, 7000, 1, 0.05); },
+      tick: function () { tone("square", 2200, 1800, 0.02, 0.06); }
+    };
+    function sync() {
+      $$("[data-sound-toggle]").forEach(function (b) {
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+        var l = $(".snd-label", b); if (l) l.textContent = on ? "Sound on" : "Sound off";
+        b.setAttribute("aria-label", on ? "Sound effects on (click to mute)" : "Sound effects off (click to unmute)");
+      });
+    }
+    return {
+      op: function (startMs, beats, beatMs) { try { playOp(startMs, beats, beatMs); } catch (e) {} },
+      stopOp: function () { try { stopOp(); } catch (e) {} },
+      play: function (name) { if (!ready() || !bank[name]) return; try { bank[name](); } catch (e) {} },
+      toggle: function () { if (on) stopOp(true); on = !on; store("localStorage", "dp-sound", on ? "on" : "off"); sync(); if (on) { ready(); bank.blip(); } },
+      sync: sync
+    };
+  })();
+  // vibration on touch devices only (supported on Android; iOS Safari ignores it)
+  function buzz(pattern) {
+    if (finePointer || !navigator.vibrate) return;
+    try { navigator.vibrate(pattern); } catch (e) {}
+  }
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-sound-toggle]");
+    if (t) { e.stopPropagation(); Sfx.toggle(); }
+  });
+
   /* ============================================================ OPENING */
   var opening = $("#opening");
-  function startHero() {
-    document.documentElement.classList.add("is-playing");
-    typeBubble();
+  var root = document.documentElement;
+  // mode "full" = arriving from the story, "quick" = skipped / returning visitor
+  function startHero(mode) {
+    root.classList.remove("intro-full", "intro-quick", "is-playing");
+    root.classList.add(mode === "full" ? "intro-full" : "intro-quick");
+    void root.offsetWidth;
+    root.classList.add("is-playing");
+    typeBubble(mode === "full");
     revealVisibleNow();
+    if (mode === "full" && !reduce) setTimeout(function () { kvSay("Welcome in."); Sfx.play("blip"); }, 1900);
   }
 
   /* ---- key visual: generated skyline + embers */
@@ -491,47 +646,183 @@
     box.innerHTML = stars;
   }
 
-  function closeOpening(animated) {
-    store("sessionStorage", "dp-opened", "1");
-    if (!animated || reduce) {
-      opening.hidden = true;
-      lockPage(false);
-      startHero();
-      return;
-    }
-    opening.classList.add("is-leaving");
-    if (navigator.vibrate && !finePointer) { try { navigator.vibrate(18); } catch (e) {} }
-    setTimeout(startHero, 650);
-    setTimeout(function () {
-      opening.hidden = true;
-      opening.classList.remove("is-leaving", "is-go");
-      $(".opening__stage").style.transform = "";
-      lockPage(false);
-    }, 1550);
+  /* ---- the story: a timeline of scenes; every step can be interrupted by Skip */
+  var storyTimers = [], storyRaf = null, storyRunning = false;
+  // the OP runs on a 400ms beat (150 BPM); cuts land on the beat
+  // phones get a slightly slower cut (120 BPM) so every frame can be read on a small screen
+  var BEAT = window.matchMedia("(max-width: 719px)").matches ? 500 : 400, OP0 = 800;
+  var STORY = { hit: 380, words: OP0, projects: OP0 + 3 * BEAT, stats: OP0 + 6 * BEAT, hero: OP0 + 9 * BEAT, title: OP0 + 12 * BEAT, fly: OP0 + 16 * BEAT, reveal: OP0 + 18 * BEAT, hole: 950 };
+  function at(ms, fn) { storyTimers.push(setTimeout(fn, ms)); }
+  function clearStory() { storyTimers.forEach(clearTimeout); storyTimers = []; cancelAnimationFrame(storyRaf); }
+  function scene(n, label) {
+    opening.setAttribute("data-scene", n);
+    var el = $("#story-scene");
+    el.textContent = label;
+    el.classList.remove("swap"); void el.offsetWidth; el.classList.add("swap");
   }
+  function subtitle(text) {
+    var el = $("#story-line");
+    el.textContent = text;
+    el.classList.remove("swap"); void el.offsetWidth; if (text) el.classList.add("swap");
+  }
+  function resetStory() {
+    clearStory();
+    storyRunning = false;
+    opening.classList.remove("is-go", "is-running", "is-fly", "is-reveal", "is-lift");
+    opening.setAttribute("data-scene", "0");
+    opening.style.maskImage = opening.style.webkitMaskImage = "";
+    $("#story-disk").style.cssText = "";
+    opening.removeAttribute("data-cut");
+    $$("#op .is-on, #op .whip, #op .is-drop, #op .go").forEach(function (el) { el.classList.remove("is-on", "whip", "is-drop", "go"); });
+    subtitle("");
+  }
+  function endStory() {
+    opening.hidden = true;
+    resetStory();
+    lockPage(false);
+    var cta = $(".kv-cta--primary");
+    if (cta) cta.focus({ preventScroll: true });
+  }
+
+  function renderOp() {
+    $("#op").style.setProperty("--beat", BEAT + "ms");
+    var words = (D.intro && D.intro.words) || [];
+    $("#op-words").innerHTML = words.slice(0, 3).map(function (w, i) {
+      return '<div class="op__word op__word--' + "abc"[i] + '"><i class="op__slash"></i><b>' + esc(w.word) + '</b><small class="mono">' + esc(w.caption || "") + "</small></div>";
+    }).join("");
+    // the record, biggest count first so the last slam is the wins
+    var st = (D.person.heroStats || []).slice(0, 3).reverse();
+    $("#op-stats").innerHTML = st.map(function (x, i) {
+      var v = x.value < 10 && !x.suffix ? "0" + x.value : String(x.value);
+      return '<div class="op__stat"><b>' + esc(v + (x.suffix || "")) + "</b><span>" + esc(x.label) + "</span>" + (i === st.length - 1 ? '<em lang="ja">ドン！</em>' : "") + "</div>";
+    }).join("");
+    var first = D.person.first || "", last = D.person.last || "", h1 = Math.ceil(first.length / 2), h2 = Math.ceil(last.length / 2);
+    $("#op-strobe").innerHTML = [first.slice(0, h1), first.slice(h1), last.slice(0, h2), last.slice(h2)].map(function (t) { return "<b>" + esc(t) + "</b>"; }).join("");
+    var len = Math.round((OP0 + 18 * BEAT) / 1000);
+    var tag = $(".story__start small"); if (tag) tag.textContent = len + "s · ♪";
+    $("#op-projects").innerHTML = D.projects.slice(0, 3).map(function (p, i) {
+      return '<div class="op__strip"><i>' + pad(i + 1) + "</i><b>" + esc(p.name) + "</b><span>" + esc(p.subtitle) + "</span></div>";
+    }).join("");
+  }
+  function flash() { var f = $(".op__flash"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go"); }
+  function pump() { var o = $("#op"); o.classList.remove("pump"); void o.offsetWidth; o.classList.add("pump"); }
+  function cutTo(name, label) { opening.setAttribute("data-cut", name); scene("op", label); flash(); }
+  // light up child k of a cut on each beat; exclusive cuts show one child at a time
+  function onBeats(sel, t, exclusive, sfx, vib) {
+    $$(sel).forEach(function (el, k) {
+      at(t + k * BEAT, function () {
+        if (exclusive) $$(sel).forEach(function (x) { x.classList.remove("is-on"); });
+        el.classList.add("is-on");
+        pump();
+        if (sfx) Sfx.play(sfx);
+        if (vib) buzz(vib);
+      });
+    });
+  }
+
+  function playStory() {
+    if (storyRunning) return;
+    storyRunning = true;
+    store("sessionStorage", "dp-opened", "1");
+    window.scrollTo(0, 0);
+    // the homepage waits underneath in its "arriving from the story" pose
+    root.classList.remove("is-playing", "intro-quick");
+    root.classList.add("intro-full");
+    opening.style.setProperty("--story-len", STORY.reveal + "ms");
+    $("#story-skip").focus({ preventScroll: true });
+
+    // 0 · the hit: impact frames, a shake and a ドン！ — then the soundtrack kicks in
+    opening.classList.add("is-impact", "is-running");
+    Sfx.play("boom"); buzz([35, 45, 25]);
+    Sfx.op(OP0, 16, BEAT);
+    at(STORY.hit, function () { opening.classList.remove("is-impact"); scene(1, "Ready"); });
+
+    // 1 · DESIGN / CODE / SHIP
+    at(STORY.words, function () { cutTo("words", "01 · Design · Code · Ship"); });
+    onBeats(".op__word", STORY.words, true, "hit", 16);
+    // 2 · the projects, whip-panned out on the last half-beat
+    at(STORY.projects, function () { cutTo("projects", "02 · The chapters"); });
+    onBeats(".op__strip", STORY.projects, false, "whoosh", 12);
+    at(STORY.stats - BEAT / 2, function () { $("#op-projects").classList.add("whip"); Sfx.play("swoosh"); });
+    // 3 · the record
+    at(STORY.stats, function () { cutTo("stats", "03 · The record"); });
+    onBeats(".op__stat", STORY.stats, true, "stamp", [30, 20, 30]);
+    // 4 · hero pose: the robot flies in, the lens flashes
+    at(STORY.hero, function () { cutTo("hero", "04 · The companion"); pump(); Sfx.play("rise"); buzz(20); });
+    at(STORY.hero + BEAT * 1.5, function () { Sfx.play("shing"); buzz([15, 25, 15]); });
+    // 5 · title drop: four strobe frames, then the name over the sun
+    at(STORY.title, function () { cutTo("title", "05 · Title"); });
+    $$(".op__strobe b").forEach(function (el, k) {
+      at(STORY.title + k * BEAT / 4, function () { $$(".op__strobe b").forEach(function (x) { x.classList.remove("is-on"); }); el.classList.add("is-on"); Sfx.play("tick"); buzz(8); });
+    });
+    at(STORY.title + BEAT + 20, function () {
+      $$(".op__strobe b").forEach(function (x) { x.classList.remove("is-on"); });
+      $(".op__title").classList.add("is-drop"); flash(); pump();
+      Sfx.play("boom"); buzz([40, 30, 40]);
+    });
+
+    // 6 · the sun flies to its place on the homepage (it becomes the moon at night)
+    at(STORY.fly, function () {
+      var ir = $("#op-sun").getBoundingClientRect(), orb = $(".kv__orb").getBoundingClientRect(), disk = $("#story-disk");
+      disk.style.transition = "none";
+      disk.style.left = orb.left + "px"; disk.style.top = orb.top + "px";
+      disk.style.width = orb.width + "px"; disk.style.height = orb.height + "px";
+      disk.style.transform = "translate(" + (ir.left - orb.left).toFixed(1) + "px," + (ir.top - orb.top).toFixed(1) + "px) scale(" + (ir.width / orb.width).toFixed(4) + ")";
+      opening.classList.add("is-fly");
+      void disk.offsetWidth;
+      disk.style.transition = "transform " + (STORY.reveal - STORY.fly - 20) + "ms var(--ease-inout)";
+      disk.style.transform = "none";
+      Sfx.play("swoosh");
+    });
+    // 7 · the page opens around the sun: an iris wipe onto the homepage
+    at(STORY.reveal, function () {
+      var orb = $(".kv__orb").getBoundingClientRect();
+      var cx = orb.left + orb.width / 2, cy = orb.top + orb.height / 2, r0 = orb.width / 2 - 1.5;
+      var r1 = Math.hypot(Math.max(cx, window.innerWidth - cx), Math.max(cy, window.innerHeight - cy)) + 20;
+      opening.classList.add("is-reveal");
+      startHero("full");
+      Sfx.play("reveal"); buzz(25);
+      var t0 = performance.now();
+      (function step(t) {
+        var p = Math.min(1, (t - t0) / STORY.hole);
+        var e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+        var r = r0 + (r1 - r0) * e;
+        var m = "radial-gradient(circle at " + cx.toFixed(1) + "px " + cy.toFixed(1) + "px, transparent " + r.toFixed(1) + "px, #000 " + (r + 1).toFixed(1) + "px)";
+        opening.style.webkitMaskImage = m; opening.style.maskImage = m;
+        if (p < 1) storyRaf = requestAnimationFrame(step); else endStory();
+      })(t0);
+    });
+  }
+
+  /* Skip: no story, no slam. The cover lifts like a curtain and the page rises to meet it. */
+  function skipStory() {
+    if (opening.hidden || opening.classList.contains("is-lift")) return;
+    clearStory();
+    Sfx.stopOp();
+    store("sessionStorage", "dp-opened", "1");
+    window.scrollTo(0, 0);
+    if (reduce) { opening.hidden = true; resetStory(); lockPage(false); startHero("quick"); return; }
+    opening.classList.add("is-lift");
+    Sfx.play("curtain"); buzz(10);
+    setTimeout(function () { startHero("quick"); }, 120);
+    setTimeout(endStory, 800);
+  }
+
   function showOpening() {
-    opening.classList.remove("is-go", "is-leaving");
+    resetStory();
+    root.classList.remove("is-playing", "intro-full", "intro-quick");
     opening.hidden = false;
     lockPage(true);
     setTimeout(function () { $("#opening-start").focus({ preventScroll: true }); }, 50);
-    // start the sequence once the display font is in, so letters never slam in a fallback face
+    // wait for the display font so letters never drop in a fallback face
     var ready = document.fonts && document.fonts.load ? document.fonts.load('1em "Dela Gothic One"') : Promise.resolve();
     var go = function () { if (!opening.hidden) { void opening.offsetWidth; opening.classList.add("is-go"); } };
     Promise.race([ready, new Promise(function (r) { setTimeout(r, 1200); })]).then(go, go);
   }
-  // the cover tilts toward the cursor (desktop)
-  if (finePointer && !reduce) {
-    opening.addEventListener("pointermove", function (e) {
-      if (opening.classList.contains("is-leaving")) return;
-      var nx = e.clientX / window.innerWidth - 0.5, ny = e.clientY / window.innerHeight - 0.5;
-      $(".opening__stage").style.transform = "rotateX(" + (-ny * 10).toFixed(2) + "deg) rotateY(" + (nx * 14).toFixed(2) + "deg)";
-      $(".opening__lines").style.translate = (nx * -30).toFixed(1) + "px " + (ny * -30).toFixed(1) + "px";
-    });
-  }
-  $("#opening-start").addEventListener("click", function () { closeOpening(true); });
-  $("#opening-skip").addEventListener("click", function () { closeOpening(false); });
+  $("#opening-start").addEventListener("click", function () { if (reduce) skipStory(); else playStory(); });
+  $("#opening-skip").addEventListener("click", skipStory);
+  $("#story-skip").addEventListener("click", skipStory);
   $("#replay").addEventListener("click", function () {
-    document.documentElement.classList.remove("is-playing");
     var b = $("#hero-bubble");
     b.classList.remove("is-done");
     $("p", b).textContent = "";
@@ -553,10 +844,10 @@
 
   /* typewriter speech bubble */
   var typing = null;
-  function typeBubble() {
+  function typeBubble(animated) {
     var b = $("#hero-bubble"), p = $("p", b), text = D.person.tagline, n = 0;
     clearInterval(typing);
-    if (reduce) { p.textContent = text; b.classList.add("is-done"); return; }
+    if (reduce || !animated) { p.textContent = text; b.classList.add("is-done"); return; }
     p.textContent = "";
     setTimeout(function () {
       typing = setInterval(function () {
@@ -598,7 +889,7 @@
     setClass(0);
     tabsEl.addEventListener("click", function (e) {
       var t = e.target.closest(".kv__tab");
-      if (t) { setClass(tabs.indexOf(t), true); kvReact(); }
+      if (t) { setClass(tabs.indexOf(t), true); kvReact(); Sfx.play("tick"); buzz(6); }
     });
     tabsEl.addEventListener("keydown", function (e) {
       var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
@@ -620,6 +911,7 @@
 
   /* ---- the protagonist: watches the cursor, blinks, powers up when poked */
   var kvReact = function () {};
+  var kvSay = function () {};
   function kvCharacter() {
     var char = $("#kv-char"), iris = $("#kv-iris"), head = $("#kv-head"), eyeEl = $("#kv-eye"), speech = $("#kv-speech"), poke = $("#kv-poke");
     if (!char) return;
@@ -628,9 +920,9 @@
       var b = eyeEl.getBoundingClientRect();
       var ex = b.left + b.width / 2, ey = b.top + b.height / 2;
       var dx = cx - ex, dy = cy - ey, d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 300);
-      tx = (dx / d) * 5.5 * k;
-      ty = (dy / d) * 3.2 * k;
-      rot = reduce ? 0 : clamp(-dy / window.innerHeight * 16, -7, 6);
+      tx = (dx / d) * 11 * k;
+      ty = (dy / d) * 8 * k;
+      rot = reduce ? 0 : clamp(dx / window.innerWidth * 10, -6, 6);
       loop();
     }
     function loop() {
@@ -654,6 +946,12 @@
     poke.addEventListener("focus", function () { char.classList.add("is-hover"); });
     poke.addEventListener("blur", function () { char.classList.remove("is-hover"); });
 
+    kvSay = function (text) {
+      speech.textContent = text;
+      speech.classList.remove("is-on"); void speech.offsetWidth; speech.classList.add("is-on");
+      clearTimeout(speechT);
+      speechT = setTimeout(function () { speech.classList.remove("is-on"); }, 2200);
+    };
     kvReact = function () {
       char.classList.remove("is-power"); void char.offsetWidth; char.classList.add("is-power");
       setTimeout(function () { char.classList.remove("is-power"); }, 1100);
@@ -661,17 +959,15 @@
     poke.addEventListener("click", function () {
       char.classList.add("was-poked");
       kvReact();
+      Sfx.play("power");
       var q = D.person.quips || [], n;
       if (q.length) {
         do { n = Math.floor(Math.random() * q.length); } while (q.length > 1 && n === lastQuip);
         lastQuip = n;
-        speech.textContent = q[n];
-        speech.classList.add("is-on");
-        clearTimeout(speechT);
-        speechT = setTimeout(function () { speech.classList.remove("is-on"); }, 2200);
+        kvSay(q[n]);
       }
       setClass(classIndex + 1, true);
-      if (navigator.vibrate && !finePointer) { try { navigator.vibrate(12); } catch (err) {} }
+      buzz(14);
     });
 
     if (reduce) return;
@@ -684,7 +980,7 @@
     })();
     setInterval(function () {
       if (Date.now() - lastMove < 2600) return;
-      tx = (Math.random() * 2 - 1) * 5; ty = (Math.random() * 2 - 1) * 3; rot = (Math.random() * 2 - 1) * 3; loop();
+      tx = (Math.random() * 2 - 1) * 9; ty = (Math.random() * 2 - 1) * 6; rot = (Math.random() * 2 - 1) * 3; loop();
     }, 2200);
   }
 
@@ -848,7 +1144,8 @@
   /* global keys */
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
-      if (!reader.hidden) closeReader();
+      if (!opening.hidden) skipStory();
+      else if (!reader.hidden) closeReader();
       else if (!index.hidden) closeIndex();
     }
     if (!reader.hidden && (e.key === "ArrowRight" || e.key === "ArrowLeft")) {
@@ -1006,6 +1303,7 @@
     }
     var col = colors();
     function seed() {
+      if (!cols || !rows) return; // canvas not laid out yet (e.g. hidden preview)
       // pre-ink a word so the canvas explains itself
       var o = document.createElement("canvas");
       o.width = cols; o.height = rows;
@@ -1152,6 +1450,7 @@
   }
 
   /* ============================================================ BOOT */
+  bindData();
   renderProfile();
   renderProjects();
   renderJourney();
@@ -1161,6 +1460,7 @@
   renderNow();
   renderFinal();
   renderStars();
+  renderOp();
   buildNav();
   $$("[data-speedlines]").forEach(speedlines);
   splitLetters();
@@ -1174,6 +1474,7 @@
   tapInk();
   copyEmail();
   syncThemeMeta();
+  Sfx.sync();
   initReveals();
 
   journeyLayout();
@@ -1187,7 +1488,7 @@
   var deepLink = location.hash && location.hash !== "#home";
   if (seen || deepLink || reduce) {
     opening.hidden = true;
-    startHero();
+    startHero("quick");
   } else {
     showOpening();
   }

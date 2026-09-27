@@ -28,45 +28,92 @@
   <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- ============================== OPENING SEQUENCE ============================== -->
-  <div class="opening" id="opening" role="dialog" aria-modal="true" aria-labelledby="opening-title">
-    <div class="opening__lines" aria-hidden="true"><div data-speedlines="160"></div></div>
-    <div class="opening__tone" aria-hidden="true"></div>
-    <p class="opening__side mono" aria-hidden="true"><span>Chapter 00</span><span>Prologue</span></p>
-    <p class="opening__vert" aria-hidden="true" lang="ja">ディーパンカル・パテル</p>
+  <!-- ============================== THE STORY (opening) ==============================
+       Start plays a ~6s manga short that match-cuts into the homepage.
+       Skip lifts the cover like a curtain in under a second.            -->
+  <div class="story" id="opening" role="dialog" aria-modal="true" aria-labelledby="opening-title" data-scene="0">
+    <div class="story__lines" aria-hidden="true"><div data-speedlines="140"></div></div>
 
-    <div class="opening__stage">
-      <div class="opening__cover" id="opening-cover">
-        <div class="opening__frame opening__frame--outer" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-        <div class="opening__frame opening__frame--inner" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-        <span class="opening__stamp" aria-hidden="true">DP</span>
-        <p class="opening__vol mono"><span>Vol. 01</span> <span lang="ja">· 第一巻</span></p>
-        <h1 class="opening__title" id="opening-title" aria-label="Deepankar Patel">
-          <span class="opening__first" data-split>Deepankar</span>
-          <span class="opening__last" data-split>Patel</span>
-        </h1>
-        <p class="opening__sub">The Builder Arc</p>
-        <div class="opening__actions">
-          <button class="opening__start" id="opening-start" type="button">
-            <span class="opening__play" aria-hidden="true"></span>
-            Start the story
-          </button>
-          <button class="opening__skip mono" id="opening-skip" type="button">Skip intro</button>
-        </div>
+    <!-- scene 0 · the cover -->
+    <div class="story__cover" id="story-cover">
+      <p class="story__vol mono"><span data-bind="volume">Vol. 01</span> <span class="jp" lang="ja">第一巻</span></p>
+      <h1 class="story__title" id="opening-title" aria-label="Deepankar Patel" data-bind-label="name">
+        <span class="story__first" data-split data-bind="first">Deepankar</span>
+        <span class="story__last" data-split data-bind="last">Patel</span>
+      </h1>
+      <p class="story__sub" data-bind="arc">The Builder Arc</p>
+      <div class="story__actions">
+        <button class="story__start" id="opening-start" type="button">
+          <span class="story__play" aria-hidden="true"></span>
+          <span>Start the story</span>
+          <small class="mono">8s · ♪</small>
+        </button>
+        <button class="story__skip" id="opening-skip" type="button">Skip to site <span aria-hidden="true">→</span></button>
       </div>
+      <button class="story__sound mono" type="button" data-sound-toggle aria-pressed="true">
+        <span class="snd-ico" aria-hidden="true"><i></i><i></i><i></i></span><span class="snd-label">Sound on</span>
+      </button>
     </div>
 
-    <div class="opening__flash" aria-hidden="true"></div>
-    <p class="opening__sfx" aria-hidden="true" lang="ja">ドン！</p>
-    <div class="opening__shard opening__shard--a" aria-hidden="true"></div>
-    <div class="opening__shard opening__shard--b" aria-hidden="true"></div>
-    <div class="opening__shard opening__shard--c" aria-hidden="true"></div>
+    <!-- the hit when Start is pressed -->
+    <p class="story__sfx" aria-hidden="true" lang="ja">ドン！</p>
+
+    <!-- ============ THE OPENING: a beat-cut anime OP (150 BPM, one cut per beat) ============ -->
+    <div class="op" id="op" aria-hidden="true">
+      <div class="op__lines" data-speedlines="120"></div>
+
+      <!-- cut 1 · word slams -->
+      <div class="op__cut op__words" id="op-words"></div>
+
+      <!-- cut 2 · projects on slanted strips -->
+      <div class="op__cut op__projects" id="op-projects"></div>
+
+      <!-- cut 3 · the record -->
+      <div class="op__cut op__stats" id="op-stats"></div>
+
+      <!-- cut 4 · hero pose -->
+      <div class="op__cut op__hero">
+        <div class="op__streaks"></div>
+        <div class="op__marquee op__marquee--1"><span>Creative Developer · UI/UX Designer · AI Builder · Creative Developer · UI/UX Designer · AI Builder ·</span></div>
+        <div class="op__marquee op__marquee--2"><span>Hackathon Winner · Builder · Designer · Hackathon Winner · Builder · Designer ·</span></div>
+        <svg class="op__bot" viewBox="140 70 480 720"><use href="#kv-figure" /></svg>
+        <span class="op__flash-star"></span>
+      </div>
+
+      <!-- cut 5 · title drop -->
+      <div class="op__cut op__title">
+        <div class="op__strobe" id="op-strobe"><b>DEEP</b><b>ANKAR</b><b>PA</b><b>TEL</b></div>
+        <div class="op__sun" id="op-sun"></div>
+        <div class="op__name">
+          <p class="mono op__vol"><span data-bind="volume">Vol. 01</span> · <span data-bind="arc">The Builder Arc</span></p>
+          <b class="op__first" data-bind="first">Deepankar</b>
+          <b class="op__last" data-bind="last">Patel</b>
+        </div>
+      </div>
+
+      <div class="op__flash"></div>
+      <div class="op__bars"><i></i><i></i></div>
+    </div>
+
+    <!-- subtitles -->
+    <p class="story__sub-line" id="story-line" aria-live="polite"></p>
+
+    <!-- scene 3 · the pupil becomes the sun (or the moon) -->
+    <div class="story__disk" id="story-disk" aria-hidden="true"></div>
+
+    <!-- chrome while the story plays -->
+    <div class="story__hud" aria-hidden="false">
+      <p class="story__scene-label mono" aria-hidden="true"><span id="story-scene">Prologue</span></p>
+      <button class="story__skip-mini mono" id="story-skip" type="button">Skip <span aria-hidden="true">›</span></button>
+      <span class="story__progress" aria-hidden="true"><i id="story-progress"></i></span>
+    </div>
   </div>
 
   <!-- ============================== NAVIGATION ============================== -->
   <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
 
   <header class="topbar" id="topbar">
-    <a class="stamp" href="#home" aria-label="Deepankar Patel — back to top">
+    <a class="stamp" href="#home" aria-label="Deepankar Patel — back to top" data-bind-label="name" data-bind-suffix=" — back to top">
       <span>DP</span>
     </a>
     <div class="topbar__chapter mono" aria-live="polite">
@@ -75,6 +122,9 @@
       <span class="topbar__name" id="chapter-name">Prologue</span>
     </div>
     <div class="topbar__actions">
+      <button class="icon-btn snd-btn" type="button" data-sound-toggle aria-pressed="true" aria-label="Sound effects">
+        <span class="snd-ico" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
       <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
       </button>
@@ -109,6 +159,12 @@
     <button class="dock__btn" id="dock-next" type="button" aria-label="Next chapter">›</button>
   </nav>
 
+  <div class="wipe" id="wipe" aria-hidden="true">
+    <div class="wipe__panel wipe__panel--a"></div>
+    <div class="wipe__panel wipe__panel--b"></div>
+    <p class="wipe__card"><span class="wipe__kanji" id="wipe-kanji"></span><span class="wipe__num" id="wipe-num"></span><span class="wipe__title" id="wipe-title"></span></p>
+  </div>
+
   <div class="cursor" aria-hidden="true"><span></span></div>
 
   <main id="main">
@@ -119,67 +175,82 @@
         <div class="kv__layer" data-depth="0.2" aria-hidden="true"><div class="kv__orb"></div></div>
         <div class="kv__layer kv__char-layer" data-depth="0.9">
           <div class="kv__char" id="kv-char">
+            <div class="kv__burst" data-speedlines="110" aria-hidden="true"></div>
             <svg class="kv__hero" id="kv-hero" viewBox="0 0 600 800" aria-hidden="true">
               <defs>
-                <pattern id="kv-tone" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.3" class="kv__tone-dot" /></pattern>
-                <filter id="kv-glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3" /></filter>
-                <filter id="kv-aura" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7" /></filter>
-                <clipPath id="kv-eye-clip"><path d="M244 311 L 276 309 L 268 327 C 260 330, 252 326, 244 311 Z" /></clipPath>
-                <path id="kv-head-shape" d="M430 150 C 380 112, 300 120, 262 170 C 240 200, 236 235, 242 262 C 244 280, 236 296, 238 306 L 246 322 C 238 336, 222 352, 206 372 L 204 378 C 212 384, 222 388, 228 390 C 226 396, 224 402, 226 406 L 232 410 C 228 414, 226 420, 230 424 C 234 428, 236 432, 234 438 C 232 452, 236 466, 250 474 C 280 490, 316 500, 334 498 L 334 566 L 452 566 C 434 520, 440 470, 452 430 C 470 380, 482 300, 472 232 C 464 192, 452 166, 430 150 Z" />
-                <path id="kv-hair-shape" d="M262 300 L 218 318 L 250 268 L 196 262 L 238 228 L 204 190 L 252 186 L 236 122 L 288 148 L 302 66 L 340 122 L 394 44 L 414 110 L 498 40 L 474 134 L 596 104 L 504 184 L 622 196 L 514 238 L 606 292 L 500 298 L 562 372 L 478 352 L 514 444 L 456 404 L 440 352 L 432 250 L 330 228 Z" />
-                <path id="kv-torso-shape" d="M334 552 C 328 590, 302 610, 280 626 C 220 660, 170 720, 150 800 L 600 800 L 600 640 C 560 610, 482 590, 450 552 Z" />
+                <pattern id="kv-tone" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.4" class="kv__tone-dot" /></pattern>
+                <clipPath id="kv-eye-clip"><path d="M314 214 H 426 Q 468 214 468 256 V 288 Q 468 330 426 330 H 314 Q 272 330 272 288 V 256 Q 272 214 314 214 Z" /></clipPath>
+                <clipPath id="kv-torso-clip"><path d="M296 394 H 444 Q 470 394 476 420 L 500 560 Q 506 604 462 604 H 278 Q 234 604 240 560 L 264 420 Q 270 394 296 394 Z" /></clipPath>
+                <path id="kv-head-shape" d="M306 170 H 434 Q 490 170 490 226 V 314 Q 490 370 434 370 H 306 Q 250 370 250 314 V 226 Q 250 170 306 170 Z" />
+                <path id="kv-torso-shape" d="M296 394 H 444 Q 470 394 476 420 L 500 560 Q 506 604 462 604 H 278 Q 234 604 240 560 L 264 420 Q 270 394 296 394 Z" />
               </defs>
+              <g id="kv-figure">
+              <ellipse class="kv__shadow" cx="370" cy="762" rx="92" ry="11" />
+              <g class="kv__float">
+                <!-- power-up outline (crisp, drawn behind) -->
+                <g class="kv__aura"><use href="#kv-torso-shape" /><use href="#kv-head-shape" /></g>
 
-              <!-- power aura (behind everything) -->
-              <g class="kv__aura" filter="url(#kv-aura)">
-                <use href="#kv-torso-shape" /><use href="#kv-head-shape" class="kv__aura-head" /><use href="#kv-hair-shape" class="kv__aura-head" />
-              </g>
+                <!-- thruster -->
+                <path class="kv__flame" d="M338 628 Q 370 720 402 628 Z" />
+                <path class="kv__flame kv__flame--in" d="M354 628 Q 370 680 386 628 Z" />
+                <path class="kv__thruster" d="M330 600 H 410 L 398 632 H 342 Z" />
 
-              <!-- scarf tail -->
-              <path class="kv__scarf kv__scarf-tail" d="M438 548 C 500 520, 560 548, 624 516 C 690 484, 730 506, 790 468 L 800 506 C 740 546, 690 528, 632 562 C 570 596, 500 586, 444 584 Z">
-                <animate id="kv-scarf-anim" attributeName="d" dur="2.6s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1; .45 0 .55 1"
-                  values="M438 548 C 500 520, 560 548, 624 516 C 690 484, 730 506, 790 468 L 800 506 C 740 546, 690 528, 632 562 C 570 596, 500 586, 444 584 Z;
-                          M438 548 C 500 540, 560 512, 624 530 C 690 548, 730 494, 790 500 L 800 540 C 740 534, 690 586, 632 572 C 570 558, 500 606, 444 584 Z;
-                          M438 548 C 500 520, 560 548, 624 516 C 690 484, 730 506, 790 468 L 800 506 C 740 546, 690 528, 632 562 C 570 596, 500 586, 444 584 Z" />
-              </path>
-
-              <g class="kv__torso">
-                <use href="#kv-torso-shape" class="kv__body" />
-              </g>
-
-              <!-- head turns toward the cursor -->
-              <g class="kv__head" id="kv-head">
-                <use href="#kv-head-shape" class="kv__body" />
-                <g class="kv__hair">
-                  <use href="#kv-hair-shape" class="kv__body" />
-                  <path class="kv__strand" d="M488 150 L 640 128 L 500 186 Z" />
-                  <path class="kv__strand kv__strand--2" d="M496 262 L 640 300 L 494 300 Z" />
+                <!-- scarf tail, streaming in the wind -->
+                <g transform="translate(-22 -150)">
+                  <path class="kv__scarf" d="M438 548 C 500 520, 560 548, 624 516 C 690 484, 730 506, 790 468 L 800 506 C 740 546, 690 528, 632 562 C 570 596, 500 586, 444 584 Z">
+                    <animate attributeName="d" dur="2.4s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1; .45 0 .55 1"
+                      values="M438 548 C 500 520, 560 548, 624 516 C 690 484, 730 506, 790 468 L 800 506 C 740 546, 690 528, 632 562 C 570 596, 500 586, 444 584 Z;
+                              M438 548 C 500 540, 560 512, 624 530 C 690 548, 730 494, 790 500 L 800 540 C 740 534, 690 586, 632 572 C 570 558, 500 606, 444 584 Z;
+                              M438 548 C 500 520, 560 548, 624 516 C 690 484, 730 506, 790 468 L 800 506 C 740 546, 690 528, 632 562 C 570 596, 500 586, 444 584 Z" />
+                  </path>
                 </g>
-                <!-- ear + headphones: a developer never leaves home without them -->
-                <path class="kv__phones" d="M300 196 C 360 150, 452 168, 470 250" />
-                <rect class="kv__cup" x="366" y="298" width="42" height="64" rx="16" transform="rotate(-12 387 330)" />
-                <path class="kv__cup-rim" d="M372 306 C 364 324, 366 346, 378 360" />
-                <!-- rim light -->
-                <path class="kv__rim" d="M238 306 L 246 322 C 238 336, 222 352, 206 372 L 204 378 C 212 384, 222 388, 228 390 C 226 396, 224 402, 226 406 L 232 410 C 228 414, 226 420, 230 424 C 234 428, 236 432, 234 438 C 232 452, 236 466, 250 474 C 280 490, 316 500, 334 498" />
-                <path class="kv__rim kv__rim--glow" d="M238 306 L 246 322 C 238 336, 222 352, 206 372 L 204 378 C 212 384, 222 388, 228 390 C 226 396, 224 402, 226 406 L 232 410 C 228 414, 226 420, 230 424 C 234 428, 236 432, 234 438 C 232 452, 236 466, 250 474 C 280 490, 316 500, 334 498" />
-                <!-- the eye: sclera wedge, iris that tracks -->
-                <g class="kv__eye" id="kv-eye">
-                  <path class="kv__sclera" d="M244 311 L 276 309 L 268 327 C 260 330, 252 326, 244 311 Z" />
-                  <g clip-path="url(#kv-eye-clip)">
-                    <g class="kv__iris" id="kv-iris">
-                      <circle class="kv__iris-ring" cx="256" cy="318" r="7.5" />
-                      <circle class="kv__pupil" cx="256" cy="318" r="3.4" />
-                      <circle class="kv__glint" cx="253.5" cy="315.5" r="1.8" />
+
+                <!-- body -->
+                <g class="kv__torso">
+                  <path class="kv__arm" d="M264 430 Q 222 452 220 522 Q 219 540 236 543 Q 252 545 254 527 L 262 474 Z" />
+                  <path class="kv__arm" d="M476 430 Q 518 452 520 522 Q 521 540 504 543 Q 488 545 486 527 L 478 474 Z" />
+                  <circle class="kv__hand" cx="236" cy="550" r="16" /><circle class="kv__hand" cx="504" cy="550" r="16" />
+                  <use href="#kv-torso-shape" class="kv__shell" />
+                  <g clip-path="url(#kv-torso-clip)"><path class="kv__tone" d="M420 394 L 520 394 L 520 620 L 380 620 Z" /></g>
+                  <rect class="kv__screen" x="316" y="436" width="108" height="66" rx="12" />
+                  <text class="kv__prompt" x="332" y="478">&gt;</text>
+                  <rect class="kv__caret" x="352" y="464" width="14" height="16" />
+                  <circle class="kv__led" cx="334" cy="540" r="7" /><circle class="kv__led kv__led--off" cx="358" cy="540" r="7" />
+                  <g class="kv__hanko" transform="rotate(-8 432 548)"><rect x="410" y="526" width="44" height="44" rx="4" /><text x="432" y="556">DP</text></g>
+                </g>
+                <rect class="kv__neck" x="344" y="364" width="52" height="34" rx="8" />
+                <!-- scarf wrap -->
+                <path class="kv__scarf" d="M312 388 Q 370 412 428 388 L 432 414 Q 370 440 308 414 Z" />
+
+                <!-- head: intro turn on the outer group, cursor tilt on the inner -->
+                <g class="kv__head-intro">
+                  <g class="kv__head" id="kv-head">
+                    <g class="kv__antenna"><path class="kv__stalk" d="M370 172 V 122" /><circle class="kv__bulb" cx="370" cy="112" r="13" /></g>
+                    <circle class="kv__ear" cx="248" cy="270" r="26" /><circle class="kv__ear-in" cx="248" cy="270" r="11" />
+                    <circle class="kv__ear" cx="492" cy="270" r="26" /><circle class="kv__ear-in" cx="492" cy="270" r="11" />
+                    <use href="#kv-head-shape" class="kv__shell" />
+                    <path class="kv__head-tone" d="M440 176 Q 488 186 488 230 V 312 Q 488 364 440 366 Q 470 330 470 270 Q 470 206 440 176 Z" />
+                    <g class="kv__eye" id="kv-eye">
+                      <path class="kv__visor" d="M314 214 H 426 Q 468 214 468 256 V 288 Q 468 330 426 330 H 314 Q 272 330 272 288 V 256 Q 272 214 314 214 Z" />
+                      <g clip-path="url(#kv-eye-clip)">
+                        <circle class="kv__lens" cx="370" cy="272" r="46" />
+                        <g class="kv__iris" id="kv-iris">
+                          <circle class="kv__iris-ring" cx="370" cy="272" r="33" />
+                          <circle class="kv__iris-deep" cx="370" cy="272" r="23" />
+                          <circle class="kv__pupil" cx="370" cy="272" r="12" />
+                          <ellipse class="kv__glint" cx="384" cy="257" rx="8" ry="6" />
+                          <circle class="kv__glint" cx="358" cy="287" r="3" />
+                        </g>
+                        <rect class="kv__lid" id="kv-lid" x="272" y="214" width="196" height="116" />
+                      </g>
+                      <path class="kv__visor-shine" d="M296 232 Q 304 222 318 222" />
                     </g>
-                    <rect class="kv__lid" id="kv-lid" x="240" y="300" width="40" height="32" />
+                    <path class="kv__blush" d="M292 344 L 300 336 M 302 346 L 310 338 M 430 346 L 438 338 M 440 348 L 448 340" />
+                    <path class="kv__mouth" d="M358 348 Q 370 358 382 348" />
                   </g>
-                  <path class="kv__lash" d="M242 310 L 278 307 L 284 302" />
                 </g>
               </g>
-
-              <!-- scarf wrap (covers the neck seam) -->
-              <path class="kv__scarf" d="M320 518 C 364 506, 424 516, 456 540 L 450 588 C 412 570, 364 566, 324 580 Z" />
-              <path class="kv__scarf-shade" d="M324 560 C 366 548, 414 552, 452 570 L 450 588 C 412 570, 364 566, 324 580 Z" />
+              </g>
             </svg>
             <button class="kv__poke" id="kv-poke" type="button" aria-label="Poke the protagonist: power up and switch class"></button>
             <p class="kv__speech" id="kv-speech" role="status" aria-live="polite"></p>
@@ -187,27 +258,26 @@
           </div>
         </div>
 
-
         <div class="kv__title">
-          <p class="kv__kicker mono">Episode 00 · The Builder Arc</p>
-          <h2 class="hero__name kv__name" id="hero-name" aria-label="Deepankar Patel">
-            <span class="hero__line" data-split>Deepankar</span>
-            <span class="hero__line hero__line--outline" data-split>Patel</span>
+          <p class="kv__kicker mono" style="--k:0">Episode 00 · <span data-bind="arc">The Builder Arc</span></p>
+          <h2 class="hero__name kv__name" id="hero-name" aria-label="Deepankar Patel" data-bind-label="name">
+            <span class="hero__line" data-split data-bind="first">Deepankar</span>
+            <span class="hero__line hero__line--outline" data-split data-bind="last">Patel</span>
           </h2>
-          <div class="kv__tagline" id="hero-bubble"><p></p></div>
+          <div class="kv__tagline" style="--k:1" id="hero-bubble"><p></p></div>
 
-          <div class="kv__class" id="kv-class">
+          <div class="kv__class" style="--k:2" id="kv-class">
             <p class="kv__class-desc" id="kv-class-desc" aria-live="polite"></p>
             <div class="kv__class-tabs" id="kv-class-tabs" role="tablist" aria-label="Class"></div>
             <span class="kv__class-count" id="kv-class-count" hidden></span>
           </div>
 
-          <div class="kv__cta">
+          <div class="kv__cta" style="--k:3">
             <a class="kv-cta kv-cta--primary" href="#about">Start reading <span aria-hidden="true">↓</span></a>
             <a class="kv-cta kv-cta--ghost" href="#projects">View projects <span aria-hidden="true">→</span></a>
           </div>
 
-          <p class="kv__stats mono"><b>2×</b> 1st place <i>·</i> <b>5</b> podiums <i>·</i> <b>10+</b> hackathons</p>
+          <p class="kv__stats mono" style="--k:4" id="kv-stats"></p>
         </div>
       </div>
     </section>
@@ -356,8 +426,8 @@
 
       <div class="credits" aria-label="Credits">
         <div class="credits__roll">
-          <p><span>Story &amp; direction</span>Deepankar Patel</p>
-          <p><span>Interface design</span>Deepankar Patel</p>
+          <p><span>Story &amp; direction</span><span class="cr" data-bind="name">Deepankar Patel</span></p>
+          <p><span>Interface design</span><span class="cr" data-bind="name">Deepankar Patel</span></p>
           <p><span>Engineering</span>HTML · CSS · JavaScript</p>
           <p><span>Screentone</span>Hand-set halftone, 6px</p>
           <p><span>Special thanks</span>TechnoJam &amp; every hackathon team</p>
@@ -366,7 +436,7 @@
       </div>
 
       <footer class="footer mono">
-        <span>© <span id="year">2026</span> Deepankar Patel</span>
+        <span>© <span id="year">2026</span> <span data-bind="name">Deepankar Patel</span></span>
         <button class="footer__replay" id="replay" type="button">↺ Replay opening</button>
       </footer>
     </section>
@@ -389,6 +459,7 @@
   </noscript>
 
   <script src="assets/js/data.js"></script>
+  <script src="assets/js/preview.js"></script>
   <script src="assets/js/main.js"></script>
 </body>
 </html>
