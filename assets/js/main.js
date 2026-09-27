@@ -136,8 +136,8 @@
     document.title = P.name + " — " + (P.volume || "Portfolio");
     var kv = $("#kv-stats");
     if (kv) kv.innerHTML = (P.heroStats || []).map(function (x) {
-      return "<b>" + esc(x.value + (x.suffix || "")) + "</b> " + esc(x.label.toLowerCase());
-    }).join(" <i>·</i> ");
+      return '<span class="kv__stat"><b>' + esc(x.value) + (x.suffix ? "<small>" + esc(x.suffix) + "</small>" : "") + "</b><span>" + esc(x.label) + "</span></span>";
+    }).join("");
   }
 
   /* ============================================================ RENDERERS */
@@ -549,7 +549,7 @@
     /* the OP soundtrack: 150 BPM, A minor (Am F C G), drums + bass + a lead that
        enters for the hero shot. Everything is scheduled up front on the audio clock. */
     var music = null;
-    function playOp(startMs, beats, beatMs) {
+    function playOp(startMs, beats, beatMs, cutBeats) {
       if (!ready()) return;
       stopOp(true);
       music = ctx.createGain(); music.gain.value = 1; music.connect(out);
@@ -563,11 +563,11 @@
         if (i % 2 === 1) { noise(0.16, 0.45, "bandpass", 2200, 1200, 0.9, t, m); tone("triangle", 200, 150, 0.08, 0.2, t, m); } // snare
         noise(0.035, 0.12, "highpass", 8000, 9000, 1, t, m); noise(0.035, 0.08, "highpass", 8000, 9000, 1, t + B / 2, m); // hats
         tone("sawtooth", f, f, 0.18, 0.22, t, m); tone("sawtooth", f * 2, f * 2, 0.16, 0.14, t + B / 2, m);            // bass
-        if (i >= 9) {                                                        // lead arpeggio for the hero + title
+        if (i >= (cutBeats ? cutBeats[5] : 9)) {                            // lead arpeggio for the hero + title
           var arp = [4, 4.8, 6, 8], base = f * 2;
           for (var k = 0; k < 4; k++) tone("square", base * arp[k], base * arp[k], 0.08, 0.07, t + k * B / 4, m);
         }
-        if (i % 3 === 0) noise(0.9, 0.16, "highpass", 3000, 7000, 0.7, t, m);  // crash on every cut
+        if (cutBeats ? cutBeats.indexOf(i) > -1 : i % 3 === 0) noise(0.9, 0.16, "highpass", 3000, 7000, 0.7, t, m);  // crash on every cut
       }
       var end = t0 + beats * B;
       tone("sine", 110, 38, 0.9, 0.9, end, m); noise(1.4, 0.25, "highpass", 2500, 6000, 0.7, end, m); // final hit
@@ -606,7 +606,7 @@
       });
     }
     return {
-      op: function (startMs, beats, beatMs) { try { playOp(startMs, beats, beatMs); } catch (e) {} },
+      op: function (startMs, beats, beatMs, cutBeats) { try { playOp(startMs, beats, beatMs, cutBeats); } catch (e) {} },
       stopOp: function () { try { stopOp(); } catch (e) {} },
       play: function (name) { if (!ready() || !bank[name]) return; try { bank[name](); } catch (e) {} },
       toggle: function () { if (on) stopOp(true); on = !on; store("localStorage", "dp-sound", on ? "on" : "off"); sync(); if (on) { ready(); bank.blip(); } },
@@ -650,8 +650,12 @@
   var storyTimers = [], storyRaf = null, storyRunning = false;
   // the OP runs on a 400ms beat (150 BPM); cuts land on the beat
   // phones get a slightly slower cut (120 BPM) so every frame can be read on a small screen
-  var BEAT = window.matchMedia("(max-width: 719px)").matches ? 500 : 400, OP0 = 800;
-  var STORY = { hit: 380, words: OP0, projects: OP0 + 3 * BEAT, stats: OP0 + 6 * BEAT, hero: OP0 + 9 * BEAT, title: OP0 + 12 * BEAT, fly: OP0 + 16 * BEAT, reveal: OP0 + 18 * BEAT, hole: 950 };
+  // one cut per beat (the record gets two beats per number so it can be read)
+  var BEAT = window.matchMedia("(max-width: 719px)").matches ? 560 : 480, OP0 = 800;
+  var CUTS = { words: 0, projects: 3, stats: 6, hero: 12, title: 15, fly: 19, reveal: 21 };
+  var STORY = { hit: 380, hole: 950 };
+  Object.keys(CUTS).forEach(function (k) { STORY[k] = OP0 + CUTS[k] * BEAT; });
+  var STORY_LEN = STORY.reveal + STORY.hole;
   function at(ms, fn) { storyTimers.push(setTimeout(fn, ms)); }
   function clearStory() { storyTimers.forEach(clearTimeout); storyTimers = []; cancelAnimationFrame(storyRaf); }
   function scene(n, label) {
@@ -698,7 +702,7 @@
     }).join("");
     var first = D.person.first || "", last = D.person.last || "", h1 = Math.ceil(first.length / 2), h2 = Math.ceil(last.length / 2);
     $("#op-strobe").innerHTML = [first.slice(0, h1), first.slice(h1), last.slice(0, h2), last.slice(h2)].map(function (t) { return "<b>" + esc(t) + "</b>"; }).join("");
-    var len = Math.round((OP0 + 18 * BEAT) / 1000);
+    var len = Math.round(STORY_LEN / 1000);
     var tag = $(".story__start small"); if (tag) tag.textContent = len + "s · ♪";
     $("#op-projects").innerHTML = D.projects.slice(0, 3).map(function (p, i) {
       return '<div class="op__strip"><i>' + pad(i + 1) + "</i><b>" + esc(p.name) + "</b><span>" + esc(p.subtitle) + "</span></div>";
@@ -708,9 +712,9 @@
   function pump() { var o = $("#op"); o.classList.remove("pump"); void o.offsetWidth; o.classList.add("pump"); }
   function cutTo(name, label) { opening.setAttribute("data-cut", name); scene("op", label); flash(); }
   // light up child k of a cut on each beat; exclusive cuts show one child at a time
-  function onBeats(sel, t, exclusive, sfx, vib) {
+  function onBeats(sel, t, exclusive, sfx, vib, step) {
     $$(sel).forEach(function (el, k) {
-      at(t + k * BEAT, function () {
+      at(t + k * (step || BEAT), function () {
         if (exclusive) $$(sel).forEach(function (x) { x.classList.remove("is-on"); });
         el.classList.add("is-on");
         pump();
@@ -734,7 +738,7 @@
     // 0 · the hit: impact frames, a shake and a ドン！ — then the soundtrack kicks in
     opening.classList.add("is-impact", "is-running");
     Sfx.play("boom"); buzz([35, 45, 25]);
-    Sfx.op(OP0, 16, BEAT);
+    Sfx.op(OP0, CUTS.fly, BEAT, [CUTS.words, CUTS.projects, CUTS.stats, CUTS.stats + 2, CUTS.stats + 4, CUTS.hero, CUTS.title]);
     at(STORY.hit, function () { opening.classList.remove("is-impact"); scene(1, "Ready"); });
 
     // 1 · DESIGN / CODE / SHIP
@@ -746,7 +750,7 @@
     at(STORY.stats - BEAT / 2, function () { $("#op-projects").classList.add("whip"); Sfx.play("swoosh"); });
     // 3 · the record
     at(STORY.stats, function () { cutTo("stats", "03 · The record"); });
-    onBeats(".op__stat", STORY.stats, true, "stamp", [30, 20, 30]);
+    onBeats(".op__stat", STORY.stats, true, "stamp", [30, 20, 30], BEAT * 2);
     // 4 · hero pose: the robot flies in, the lens flashes
     at(STORY.hero, function () { cutTo("hero", "04 · The companion"); pump(); Sfx.play("rise"); buzz(20); });
     at(STORY.hero + BEAT * 1.5, function () { Sfx.play("shing"); buzz([15, 25, 15]); });
@@ -956,6 +960,28 @@
       char.classList.remove("is-power"); void char.offsetWidth; char.classList.add("is-power");
       setTimeout(function () { char.classList.remove("is-power"); }, 1100);
     };
+    // the name: ripple on hover, special move on click / tap
+    var nameEl = $("#hero-name"), waveT, superT, superLines = ["Special move!", "Full power!", "Barrel roll!", "Let's gooo!"];
+    nameEl.setAttribute("role", "button");
+    nameEl.setAttribute("tabindex", "0");
+    nameEl.addEventListener("mouseenter", function () {
+      nameEl.classList.add("wave");
+      clearTimeout(waveT); waveT = setTimeout(function () { nameEl.classList.remove("wave"); }, 380);
+      Sfx.play("tick");
+    });
+    function superMove() {
+      if (reduce) { kvSay(superLines[0]); return; }
+      nameEl.classList.remove("shock", "wave"); void nameEl.offsetWidth; nameEl.classList.add("shock");
+      char.classList.remove("is-super"); void char.offsetWidth; char.classList.add("is-super");
+      clearTimeout(superT); superT = setTimeout(function () { char.classList.remove("is-super"); nameEl.classList.remove("shock"); }, 1550);
+      Sfx.play("rise"); setTimeout(function () { Sfx.play("shing"); }, 550); setTimeout(function () { Sfx.play("hit"); }, 1150);
+      buzz([20, 60, 30, 60, 40]);
+      setTimeout(function () { kvSay(superLines[Math.floor(Math.random() * superLines.length)]); }, 500);
+      setClass(classIndex + 1, true);
+    }
+    nameEl.addEventListener("click", superMove);
+    nameEl.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); superMove(); } });
+
     poke.addEventListener("click", function () {
       char.classList.add("was-poked");
       kvReact();

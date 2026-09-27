@@ -586,7 +586,7 @@ body::after {
 .story__hud { position: absolute; inset: 0; z-index: 6; pointer-events: none; opacity: 0; transition: opacity .4s; }
 .story:not([data-scene="0"]) .story__hud { opacity: 1; }
 .story.is-reveal .story__hud { opacity: 0; }
-.story__scene-label { position: absolute; left: var(--pad); top: calc(20px + env(safe-area-inset-top)); color: var(--c-bone-2); }
+.story__scene-label { position: absolute; left: var(--pad); top: calc(20px + env(safe-area-inset-top)); color: var(--c-bone-2); display: grid; gap: 4px; }
 .story__scene-label span { display: inline-block; }
 .story__scene-label span.swap { animation: name-swap .45s var(--ease-out); }
 .story__skip-mini {
@@ -1089,7 +1089,7 @@ body::after {
 
 /* class: one clear line, four quiet switches */
 .kv__class { margin: 26px 0 30px; padding-left: 14px; border-left: 2px solid var(--accent); }
-.kv__class-desc { font-size: .95rem; color: var(--muted); min-height: 1.5em; }
+.kv__class-desc { display: none; }
 .kv__class-desc b { color: var(--ink); font-weight: 700; }
 .kv__class-desc.swap { animation: role-swap .45s var(--ease-out); }
 @keyframes role-swap { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
@@ -1099,6 +1099,8 @@ body::after {
 .kv__tab b { font-weight: 400; opacity: .6; }
 .kv__tab em { font-style: normal; }
 .kv__tab .l { display: none; }
+.kv__tab[aria-selected="true"] .l { display: inline; }
+.kv__tab[aria-selected="true"] .s { display: none; }
 .kv__tab:hover { color: var(--ink); }
 .kv__tab[aria-selected="true"] { color: var(--ink); }
 .kv__tab i { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: color-mix(in srgb, var(--ink) 15%, transparent); }
@@ -1114,9 +1116,12 @@ body::after {
 .kv-cta--primary:hover { transform: translateY(-2px); gap: 14px; }
 .kv-cta--ghost { color: var(--ink); border-bottom: 2px solid color-mix(in srgb, var(--ink) 25%, transparent); min-height: 40px; }
 .kv-cta--ghost:hover { border-color: var(--accent); gap: 14px; }
-.kv__stats { margin-top: 28px; color: var(--muted); font-size: .7rem; }
-.kv__stats b { color: var(--ink); font-weight: 600; }
-.kv__stats i { font-style: normal; margin: 0 8px; color: var(--accent); }
+/* stats: three big numbers */
+.kv__stats { display: flex; gap: clamp(18px, 3vw, 40px); margin-top: 30px; }
+.kv__stat { display: grid; gap: 4px; padding-left: 12px; border-left: 2px solid var(--accent); }
+.kv__stat b { font-family: var(--f-display); font-weight: 400; font-size: clamp(1.9rem, 3.2vw, 2.8rem); line-height: 1; color: var(--ink); }
+.kv__stat b small { font-size: .55em; color: var(--accent); margin-left: 1px; }
+.kv__stat span { font-family: var(--f-mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 
 /* entrance: a slow fade up, then the title */
 .js .kv__orb { opacity: 0; scale: .9; transition: opacity 1.4s .1s, scale 2s var(--ease-out) .1s; }
@@ -1156,6 +1161,36 @@ body::after {
 @keyframes ch-quick { from { opacity: 0; transform: translateY(35%); } }
 .intro-quick .kv__tagline p::after { content: none; }
 
+
+/* ---- the name: letters ripple on hover; click makes the robot do its special move */
+.kv__name { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.kv__name .ch { transition: translate .35s var(--ease-out), color .25s, text-shadow .25s; transition-delay: calc(var(--i) * 28ms); }
+.kv__name.wave .ch { translate: 0 -16%; }
+.kv__name.wave .hero__line:first-child .ch { color: var(--accent); }
+.kv__name.wave .hero__line--outline .ch { color: var(--ink); }
+.kv__name .ch:hover { translate: 0 -22%; transition-delay: 0s; }
+.kv__name.shock .ch { animation: ch-shock .55s var(--ease-snap) both; animation-delay: calc(var(--i) * 22ms); }
+@keyframes ch-shock { 0% { transform: none; } 35% { transform: translateY(-30%) rotate(-8deg) scale(1.15); } 70% { transform: translateY(6%) rotate(3deg); } 100% { transform: none; } }
+
+.kv__char.is-super .kv__float { animation: super-move 1.5s var(--ease-out); transform-box: view-box; transform-origin: 370px 430px; }
+@keyframes super-move {
+  0% { transform: none; }
+  18% { transform: translateY(24px) scale(1.04, .92); }
+  38% { transform: translateY(-110px) rotate(-20deg); }
+  62% { transform: translateY(-140px) rotate(340deg) scale(1.08); }
+  80% { transform: translateY(8px) rotate(360deg) scale(1.02, .96); }
+  100% { transform: rotate(360deg); }
+}
+.kv__char.is-super .kv__flame { animation: super-flame .12s steps(2) infinite alternate; }
+@keyframes super-flame { from { transform: scaleY(1.6) scaleX(1.2); } to { transform: scaleY(2.4) scaleX(.9); } }
+.kv__char.is-super .kv__iris-ring { animation: lens-charge .18s steps(2) 6; }
+@keyframes lens-charge { 50% { fill: #fff; } }
+.kv__char.is-super .kv__bulb { animation: bulb .2s steps(2) 6; }
+.kv__char.is-super .kv__burst { animation: kv-burst 1.4s var(--ease-out); }
+.kv__char.is-super .kv__aura { animation: aura 1.5s var(--ease-out); }
+.kv__char.is-super .kv__shadow { animation: shadow-super 1.5s var(--ease-out); }
+@keyframes shadow-super { 40%, 65% { transform: scale(.45); opacity: .05; } }
+
 /* portrait: character above, title below */
 @media (max-width: 719px), (orientation: portrait) and (max-width: 1099px) {
   .kv__sky::after { background: linear-gradient(0deg, var(--paper) 42%, color-mix(in srgb, var(--paper) 70%, transparent) 52%, transparent 64%); }
@@ -1171,7 +1206,9 @@ body::after {
   .kv__class { margin: 18px 0 22px; }
   .kv__cta { gap: 12px 22px; }
   .kv-cta--primary { flex: 1 1 auto; justify-content: center; }
-  .kv__stats { margin-top: 18px; }
+  .kv__stats { margin-top: 18px; justify-content: space-between; gap: 10px; }
+  .kv__stat b { font-size: 1.8rem; }
+  .kv__stat span { font-size: .58rem; }
   .kv__speech { left: 2%; top: 30%; translate: -62% 0; font-size: .8rem; padding: 8px 12px; max-width: 150px; white-space: normal; z-index: 6; }
   .kv__hint { top: 26%; left: 10%; }
 }
@@ -2130,8 +2167,11 @@ body::after {
 
 /* ---- very small phones (≤ 400px) */
 @media (max-width: 400px) {
-  .kv__stats { font-size: .6rem; letter-spacing: .06em; white-space: nowrap; }
-  .kv__stats i { margin: 0 4px; }
+  .kv__stat { padding-left: 8px; }
+  .kv__stat b { font-size: 1.55rem; }
+  .kv__stat span { font-size: .52rem; letter-spacing: .06em; }
+  .kv__tab[aria-selected="true"] .l { display: none; }
+  .kv__tab[aria-selected="true"] .s { display: inline; }
   .kv__kicker { font-size: .64rem; }
   .kv__char { height: 42%; right: -16vw; }
   .fpanel:nth-child(n+4) strong { font-size: .78rem; letter-spacing: 0; }
