@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Deepankar Patel — Vol. 01</title>
+  <meta name="description" content="Deepankar Patel — creative developer, UI/UX designer and AI builder. An interactive manga-style portfolio: projects, journey, skills and hackathon arcs." />
+  <meta name="theme-color" content="#f2ede3" />
+  <meta property="og:title" content="Deepankar Patel — Vol. 01" />
+  <meta property="og:description" content="Creative developer · designer · builder. Read the story." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="assets/fonts/dela-gothic-one-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script>
+    /* Apply the saved theme before first paint */
+    (function () {
+      try {
+        var t = localStorage.getItem("dp-theme");
+        if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============================== OPENING SEQUENCE ============================== -->
+  <!-- ============================== THE STORY (opening) ==============================
+       Start plays a ~6s manga short that match-cuts into the homepage.
+       Skip lifts the cover like a curtain in under a second.            -->
+  <div class="story" id="opening" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="opening-title" data-scene="0">
+    <div class="story__lines" aria-hidden="true"><div data-speedlines="140" data-near></div></div>
+
+    <!-- scene 0 · the cover -->
+    <div class="story__cover" id="story-cover">
+      <p class="story__vol mono"><span data-bind="volume">Vol. 01</span> <span class="jp" lang="ja">第一巻</span></p>
+      <h1 class="story__title" id="opening-title" aria-label="Deepankar Patel" data-bind-label="name">
+        <span class="story__first" data-split data-bind="first">Deepankar</span>
+        <span class="story__last" data-split data-bind="last">Patel</span>
+      </h1>
+      <p class="story__sub" data-bind="arc">The Builder Arc</p>
+      <div class="story__actions">
+        <button class="story__start" id="opening-start" type="button">
+          <span class="story__play" aria-hidden="true"></span>
+          <span>Start the story</span>
+        </button>
+        <button class="story__skip" id="opening-skip" type="button">Skip to site <span aria-hidden="true">→</span></button>
+      </div>
+      <button class="story__sound mono" type="button" data-sound-toggle aria-pressed="true">
+        <span class="snd-ico" aria-hidden="true"><i></i><i></i><i></i></span><span class="snd-label">Sound on</span>
+      </button>
+    </div>
+
+    <!-- the hit when Start is pressed -->
+    <p class="story__sfx" aria-hidden="true" lang="ja">ドン！</p>
+
+    <!-- ============ THE OPENING: a beat-cut anime OP (150 BPM, one cut per beat) ============ -->
+    <div class="op" id="op" aria-hidden="true">
+      <div class="op__lines" data-speedlines="120"></div>
+
+      <!-- cut 1 · word slams -->
+      <div class="op__cut op__words" id="op-words"></div>
+
+      <!-- cut 2 · projects on slanted strips -->
+      <div class="op__cut op__projects" id="op-projects"></div>
+
+      <!-- cut 3 · the record -->
+      <div class="op__cut op__stats" id="op-stats"></div>
+
+      <!-- cut 4 · hero pose -->
+      <div class="op__cut op__hero">
+        <div class="op__streaks"></div>
+        <div class="op__marquee op__marquee--1"><span>Creative Developer · UI/UX Designer · AI Builder · Creative Developer · UI/UX Designer · AI Builder ·</span></div>
+        <div class="op__marquee op__marquee--2"><span>Hackathon Winner · Builder · Designer · Hackathon Winner · Builder · Designer ·</span></div>
+        <svg class="op__bot" viewBox="140 70 480 720"><use href="#kv-figure" /></svg>
+        <span class="op__flash-star"></span>
+      </div>
+
+      <!-- cut 5 · title drop -->
+      <div class="op__cut op__title">
+        <div class="op__strobe" id="op-strobe"><b>DEEP</b><b>ANKAR</b><b>PA</b><b>TEL</b></div>
+        <div class="op__sun" id="op-sun"></div>
+        <div class="op__name">
+          <p class="mono op__vol"><span data-bind="volume">Vol. 01</span> · <span data-bind="arc">The Builder Arc</span></p>
+          <b class="op__first" data-bind="first">Deepankar</b>
+          <b class="op__last" data-bind="last">Patel</b>
+        </div>
+      </div>
+
+      <div class="op__flash"></div>
+      <div class="op__bars"><i></i><i></i></div>
+    </div>
+
+    <!-- subtitles -->
+    <p class="story__sub-line" id="story-line" aria-live="polite"></p>
+
+    <!-- scene 3 · the pupil becomes the sun (or the moon) -->
+    <div class="story__disk" id="story-disk" aria-hidden="true"></div>
+
+    <!-- chrome while the story plays -->
+    <div class="story__hud" aria-hidden="false">
+      <p class="story__scene-label mono" aria-hidden="true"><span id="story-scene">Prologue</span></p>
+      <span class="story__progress" aria-hidden="true"><i id="story-progress"></i></span>
+    </div>
+  </div>
+
+  <!-- ============================== NAVIGATION ============================== -->
+  <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+
+  <header class="topbar" id="topbar">
+    <a class="stamp" href="#home" aria-label="Deepankar Patel — back to top" data-bind-label="name" data-bind-suffix=" — back to top">
+      <span>DP</span>
+    </a>
+    <div class="topbar__chapter mono" aria-live="polite">
+      <span class="topbar__num" id="chapter-num">00</span>
+      <span class="topbar__sep" aria-hidden="true">/</span>
+      <span class="topbar__name" id="chapter-name">Prologue</span>
+    </div>
+    <div class="topbar__actions">
+      <button class="icon-btn snd-btn" type="button" data-sound-toggle aria-pressed="true" aria-label="Sound effects">
+        <span class="snd-ico" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+      </button>
+      <button class="index-btn" id="index-open" type="button" aria-expanded="false" aria-controls="index">
+        <span class="index-btn__bars" aria-hidden="true"><i></i><i></i></span>
+        <span class="mono">Index</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="rail" aria-label="Chapters">
+    <ol id="rail-list"></ol>
+  </nav>
+
+  <div class="index" id="index" role="dialog" aria-modal="true" aria-label="Table of contents" hidden>
+    <div class="index__head">
+      <p class="mono">Table of contents · 目次</p>
+      <button class="index__close" id="index-close" type="button" aria-label="Close index">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <ol class="index__grid" id="index-list"></ol>
+  </div>
+
+  <nav class="dock" id="dock" aria-label="Chapter navigation">
+    <button class="dock__btn" id="dock-prev" type="button" aria-label="Previous chapter">‹</button>
+    <button class="dock__mid" id="dock-index" type="button" aria-label="Open table of contents">
+      <span class="dock__num mono" id="dock-num">00</span>
+      <span class="dock__name" id="dock-name">Prologue</span>
+      <span class="dock__bar" aria-hidden="true"><i id="dock-bar"></i></span>
+    </button>
+    <button class="dock__btn" id="dock-next" type="button" aria-label="Next chapter">›</button>
+  </nav>
+
+  <div class="wipe" id="wipe" aria-hidden="true">
+    <div class="wipe__panel wipe__panel--a"></div>
+    <div class="wipe__panel wipe__panel--b"></div>
+    <p class="wipe__card"><span class="wipe__kanji" id="wipe-kanji"></span><span class="wipe__num" id="wipe-num"></span><span class="wipe__title" id="wipe-title"></span></p>
+  </div>
+
+  <div class="cursor" aria-hidden="true"><span></span></div>
+
+  <main id="main">
+    <!-- ============================== 00 · HERO (key visual) ============================== -->
+    <section class="chapter hero" id="home" data-chapter="00" data-title="Prologue" data-label="Home" data-kanji="序章">
+      <div class="kv" id="kv">
+        <div class="kv__sky" aria-hidden="true"><div class="kv__stars" id="kv-stars"></div></div>
+        <div class="kv__layer" data-depth="0.2" aria-hidden="true"><div class="kv__orb"></div></div>
+        <div class="kv__layer kv__char-layer" data-depth="0.9">
+          <div class="kv__char" id="kv-char">
+            <div class="kv__burst" data-speedlines="110" aria-hidden="true"></div>
+            <svg class="kv__hero" id="kv-hero" viewBox="0 0 600 800" aria-hidden="true">
+              <defs>
+                <pattern id="kv-tone" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.4" class="kv__tone-dot" /></pattern>
+                <clipPath id="kv-eye-clip"><path d="M314 214 H 426 Q 468 214 468 256 V 288 Q 468 330 426 330 H 314 Q 272 330 272 288 V 256 Q 272 214 314 214 Z" /></clipPath>
+                <clipPath id="kv-torso-clip"><path d="M296 394 H 444 Q 470 394 476 420 L 500 560 Q 506 604 462 604 H 278 Q 234 604 240 560 L 264 420 Q 270 394 296 394 Z" /></clipPath>
+                <path id="kv-head-shape" d="M306 170 H 434 Q 490 170 490 226 V 314 Q 490 370 434 370 H 306 Q 250 370 250 314 V 226 Q 250 170 306 170 Z" />
+                <path id="kv-torso-shape" d="M296 394 H 444 Q 470 394 476 420 L 500 560 Q 506 604 462 604 H 278 Q 234 604 240 560 L 264 420 Q 270 394 296 394 Z" />
+              </defs>
+              <g id="kv-figure">
+              <ellipse class="kv__shadow" cx="370" cy="762" rx="92" ry="11" />
+              <g class="kv__float">
+                <!-- power-up outline (crisp, drawn behind) -->
+                <g class="kv__aura"><use href="#kv-torso-shape" /><use href="#kv-head-shape" /></g>
+
+                <!-- thruster -->
+                <path class="kv__flame" d="M338 628 Q 370 720 402 628 Z" />
+                <path class="kv__flame kv__flame--in" d="M354 628 Q 370 680 386 628 Z" />
+                <path class="kv__thruster" d="M330 600 H 410 L 398 632 H 342 Z" />
+
+                <!-- scarf tail, streaming in the wind -->
+                <g transform="translate(-22 -150)">
+                  <path class="kv__scarf" d="M438 548 C 500 520, 560 548, 624 516 C 690 484, 730 506, 790 468 L 800 506 C 740 546, 690 528, 632 562 C 570 596, 500 586, 444 584 Z">
+                    <animate attributeName="d" dur="2.4s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1; .45 0 .55 1"
+                      values="M438 548 C 500 520, 560 548, 624 516 C 690 484, 730 506, 790 468 L 800 506 C 740 546, 690 528, 632 562 C 570 596, 500 586, 444 584 Z;
+                              M438 548 C 500 540, 560 512, 624 530 C 690 548, 730 494, 790 500 L 800 540 C 740 534, 690 586, 632 572 C 570 558, 500 606, 444 584 Z;
+                              M438 548 C 500 520, 560 548, 624 516 C 690 484, 730 506, 790 468 L 800 506 C 740 546, 690 528, 632 562 C 570 596, 500 586, 444 584 Z" />
+                  </path>
+                </g>
+
+                <!-- body -->
+                <g class="kv__torso">
+                  <path class="kv__arm" d="M264 430 Q 222 452 220 522 Q 219 540 236 543 Q 252 545 254 527 L 262 474 Z" />
+                  <path class="kv__arm" d="M476 430 Q 518 452 520 522 Q 521 540 504 543 Q 488 545 486 527 L 478 474 Z" />
+                  <circle class="kv__hand" cx="236" cy="550" r="16" /><circle class="kv__hand" cx="504" cy="550" r="16" />
+                  <use href="#kv-torso-shape" class="kv__shell" />
+                  <g clip-path="url(#kv-torso-clip)"><path class="kv__tone" d="M420 394 L 520 394 L 520 620 L 380 620 Z" /></g>
+                  <rect class="kv__screen" x="316" y="436" width="108" height="66" rx="12" />
+                  <text class="kv__prompt" x="332" y="478">&gt;</text>
+                  <rect class="kv__caret" x="352" y="464" width="14" height="16" />
+                  <circle class="kv__led" cx="334" cy="540" r="7" /><circle class="kv__led kv__led--off" cx="358" cy="540" r="7" />
+                  <g class="kv__hanko" transform="rotate(-8 432 548)"><rect x="410" y="526" width="44" height="44" rx="4" /><text x="432" y="556">DP</text></g>
+                </g>
+                <rect class="kv__neck" x="344" y="364" width="52" height="34" rx="8" />
+                <!-- scarf wrap -->
+                <path class="kv__scarf" d="M312 388 Q 370 412 428 388 L 432 414 Q 370 440 308 414 Z" />
+
+                <!-- head: intro turn on the outer group, cursor tilt on the inner -->
+                <g class="kv__head-intro">
+                  <g class="kv__head" id="kv-head">
+                    <g class="kv__antenna"><path class="kv__stalk" d="M370 172 V 122" /><circle class="kv__bulb" cx="370" cy="112" r="13" /></g>
+                    <circle class="kv__ear" cx="248" cy="270" r="26" /><circle class="kv__ear-in" cx="248" cy="270" r="11" />
+                    <circle class="kv__ear" cx="492" cy="270" r="26" /><circle class="kv__ear-in" cx="492" cy="270" r="11" />
+                    <use href="#kv-head-shape" class="kv__shell" />
+                    <path class="kv__head-tone" d="M440 176 Q 488 186 488 230 V 312 Q 488 364 440 366 Q 470 330 470 270 Q 470 206 440 176 Z" />
+                    <g class="kv__eye" id="kv-eye">
+                      <path class="kv__visor" d="M314 214 H 426 Q 468 214 468 256 V 288 Q 468 330 426 330 H 314 Q 272 330 272 288 V 256 Q 272 214 314 214 Z" />
+                      <g clip-path="url(#kv-eye-clip)">
+                        <circle class="kv__lens" cx="370" cy="272" r="46" />
+                        <g class="kv__iris" id="kv-iris">
+                          <circle class="kv__iris-ring" cx="370" cy="272" r="33" />
+                          <circle class="kv__iris-deep" cx="370" cy="272" r="23" />
+                          <circle class="kv__pupil" cx="370" cy="272" r="12" />
+                          <ellipse class="kv__glint" cx="384" cy="257" rx="8" ry="6" />
+                          <circle class="kv__glint" cx="358" cy="287" r="3" />
+                        </g>
+                        <rect class="kv__lid" id="kv-lid" x="272" y="214" width="196" height="116" />
+                      </g>
+                      <path class="kv__visor-shine" d="M296 232 Q 304 222 318 222" />
+                    </g>
+                    <path class="kv__blush" d="M292 344 L 300 336 M 302 346 L 310 338 M 430 346 L 438 338 M 440 348 L 448 340" />
+                    <path class="kv__mouth" d="M358 348 Q 370 358 382 348" />
+                  </g>
+                </g>
+              </g>
+              </g>
+            </svg>
+            <button class="kv__poke" id="kv-poke" type="button" aria-label="Poke the protagonist: power up and switch class"></button>
+            <p class="kv__speech" id="kv-speech" role="status" aria-live="polite"></p>
+            <span class="kv__hint mono" aria-hidden="true">Tap me</span>
+          </div>
+        </div>
+
+        <div class="kv__title">
+          <p class="kv__kicker mono" style="--k:0">Episode 00 · <span data-bind="arc">The Builder Arc</span></p>
+          <h2 class="hero__name kv__name" id="hero-name" aria-label="Deepankar Patel" data-bind-label="name">
+            <span class="hero__line" data-split data-bind="first">Deepankar</span>
+            <span class="hero__line hero__line--outline" data-split data-bind="last">Patel</span>
+          </h2>
+          <div class="kv__tagline" style="--k:1" id="hero-bubble"><p></p></div>
+
+          <div class="kv__class" style="--k:2" id="kv-class">
+            <p class="kv__class-desc" id="kv-class-desc" aria-live="polite"></p>
+            <div class="kv__class-tabs" id="kv-class-tabs" role="tablist" aria-label="Class"></div>
+            <span class="kv__class-count" id="kv-class-count" hidden></span>
+          </div>
+
+          <div class="kv__cta" style="--k:3">
+            <a class="kv-cta kv-cta--primary" href="#about">Start reading <span aria-hidden="true">↓</span></a>
+            <a class="kv-cta kv-cta--ghost" href="#projects">View projects <span aria-hidden="true">→</span></a>
+          </div>
+
+          <p class="kv__stats mono" style="--k:4" id="kv-stats"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== 01 · ABOUT ============================== -->
+    <section class="chapter about" id="about" data-chapter="01" data-title="Character Profile" data-label="About" data-kanji="第一話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">01</span>
+        <div>
+          <p class="chapter__kanji">第一話 <span class="mono">· Episode 1</span></p>
+          <h2 class="chapter__title">Character Profile</h2>
+          <p class="chapter__sub">Builder. Founder. Community lead.</p>
+        </div>
+      </header>
+
+      <div class="profile" id="profile"></div>
+    </section>
+
+    <!-- ============================== 02 · PROJECTS ============================== -->
+    <section class="chapter projects" id="projects" data-chapter="02" data-title="The Chapters" data-label="Projects" data-kanji="第二話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">02</span>
+        <div>
+          <p class="chapter__kanji">第二話 <span class="mono">· Episode 2</span></p>
+          <h2 class="chapter__title">The Chapters</h2>
+          <p class="chapter__sub">Tap a project to open it.</p>
+        </div>
+      </header>
+      <div class="project-page" id="project-page"></div>
+    </section>
+
+    <!-- ============================== 03 · JOURNEY ============================== -->
+    <section class="chapter journey" id="journey" data-chapter="03" data-title="The Journey" data-label="Journey" data-kanji="第三話">
+      <div class="journey__pin" id="journey-pin">
+        <header class="chapter__head reveal">
+          <span class="chapter__num" aria-hidden="true">03</span>
+          <div>
+            <p class="chapter__kanji">第三話 <span class="mono">· Episode 3</span></p>
+            <h2 class="chapter__title">The Journey</h2>
+            <p class="chapter__sub">The story so far.</p>
+          </div>
+          <p class="journey__count mono" aria-hidden="true"><span id="journey-current">01</span> / <span id="journey-total">08</span></p>
+        </header>
+        <div class="journey__viewport">
+          <ol class="journey__track" id="journey-track"></ol>
+        </div>
+        <div class="journey__bar" aria-hidden="true"><span id="journey-bar"></span><div class="journey__ticks" id="journey-ticks"></div></div>
+      </div>
+    </section>
+
+    <!-- ============================== 04 · SKILLS ============================== -->
+    <section class="chapter skills" id="skills" data-chapter="04" data-title="Ability Tree" data-label="Skills" data-kanji="第四話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">04</span>
+        <div>
+          <p class="chapter__kanji">第四話 <span class="mono">· Episode 4</span></p>
+          <h2 class="chapter__title">Ability Tree</h2>
+          <p class="chapter__sub">Tap a skill to see where I used it.</p>
+        </div>
+      </header>
+      <div class="skill-board" id="skill-board"></div>
+      <div class="skill-scan panel" id="skill-scan" aria-live="polite">
+        <p class="skill-scan__hint mono">▸ Select a skill</p>
+      </div>
+    </section>
+
+    <!-- ============================== 05 · ACHIEVEMENTS ============================== -->
+    <section class="chapter arcs" id="achievements" data-chapter="05" data-title="Arcs Cleared" data-label="Achievements" data-kanji="第五話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">05</span>
+        <div>
+          <p class="chapter__kanji">第五話 <span class="mono">· Episode 5</span></p>
+          <h2 class="chapter__title">Arcs Cleared</h2>
+          <p class="chapter__sub">Wins, grants and events.</p>
+        </div>
+      </header>
+      <p class="swipe-hint mono" aria-hidden="true">Swipe the cards</p>
+      <ul class="arc-grid" id="arc-grid"></ul>
+    </section>
+
+    <!-- ============================== 06 · SNAPSHOTS ============================== -->
+    <section class="chapter gallery" id="gallery" data-chapter="06" data-title="Snapshots" data-label="Photos" data-kanji="第六話">
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">06</span>
+        <div>
+          <p class="chapter__kanji">第六話 <span class="mono">· Episode 6</span></p>
+          <h2 class="chapter__title">Snapshots</h2>
+          <p class="chapter__sub"><span class="gal-hint-pile">Drag the photos around. Click one to open it.</span><span class="gal-hint-stack">Swipe the stack. Tap to open.</span></p>
+        </div>
+      </header>
+      <div class="gal-bar reveal">
+        <div class="gal-filter" id="gal-filter" role="group" aria-label="Filter photos"></div>
+        <div class="gal-tools">
+          <a class="gal-tool gal-owner mono" id="gal-add" href="edit.html#photos" hidden>＋ Add photos</a>
+          <button class="gal-tool mono" id="gal-shuffle" type="button">↻ Shuffle</button>
+          <button class="gal-tool mono" id="gal-mode" type="button" aria-pressed="false">▦ Grid</button>
+        </div>
+      </div>
+      <div class="gal" id="gal" data-mode="pile" aria-label="Photos"></div>
+      <p class="gal-count mono" id="gal-count" aria-live="polite"></p>
+    </section>
+
+
+    <!-- ============================== 07 · CURRENT ARC ============================== -->
+    <section class="chapter now invert" id="now" data-chapter="07" data-title="Current Arc" data-label="Now" data-kanji="第七話">
+      <div class="marquee" aria-hidden="true"><div class="marquee__inner" id="now-marquee"></div></div>
+      <header class="chapter__head reveal">
+        <span class="chapter__num" aria-hidden="true">07</span>
+        <div>
+          <p class="chapter__kanji">第七話 <span class="mono">· Episode 7</span></p>
+          <h2 class="chapter__title">Current Arc <span class="onair mono"><i></i>Now inking</span></h2>
+          <p class="chapter__sub" id="now-updated"></p>
+        </div>
+      </header>
+      <div class="now-grid" id="now-grid"></div>
+    </section>
+
+    <!-- ============================== 08 · FINAL ============================== -->
+    <section class="chapter final invert" id="contact" data-chapter="08" data-title="Final Chapter" data-label="Contact" data-kanji="最終話">
+      <div class="speedlines speedlines--final" data-speedlines="160" aria-hidden="true"></div>
+      <div class="final__inner">
+        <p class="chapter__kanji final__kanji">最終話 <span class="mono">· Final Chapter</span></p>
+        <h2 class="final__title reveal">
+          <span>Every season ends</span>
+          <span>on a <em>cliffhanger.</em></span>
+        </h2>
+        <p class="final__lede reveal">Let's build the next episode together.</p>
+
+        <div class="final__panels" id="final-panels"></div>
+
+        <div class="final__email reveal">
+          <a class="final__address" id="final-address" href="#"></a>
+          <button class="btn btn--light" id="copy-email" type="button">Copy email</button>
+          <span class="bubble bubble--tiny" id="copy-bubble" role="status"></span>
+        </div>
+
+        <a class="tbc reveal" href="#home" id="tbc">
+          <span class="tbc__text">To be continued</span>
+          <span class="tbc__arrow" aria-hidden="true"></span>
+          <span class="visually-hidden">(back to the start)</span>
+        </a>
+      </div>
+
+      <div class="credits" aria-label="Credits">
+        <div class="credits__roll">
+          <p><span>Story &amp; direction</span><span class="cr" data-bind="name">Deepankar Patel</span></p>
+          <p><span>Interface design</span><span class="cr" data-bind="name">Deepankar Patel</span></p>
+          <p><span>Engineering</span>HTML · CSS · JavaScript</p>
+          <p><span>Screentone</span>Hand-set halftone, 6px</p>
+          <p><span>Special thanks</span>TechnoJam &amp; every hackathon team</p>
+          <p><span>Next volume</span>In production</p>
+        </div>
+      </div>
+
+      <footer class="footer mono">
+        <span>© <span id="year">2026</span> <span data-bind="name">Deepankar Patel</span></span>
+        <button class="footer__replay" id="replay" type="button">↺ Replay opening</button>
+      </footer>
+    </section>
+  </main>
+
+  <!-- ============================== PHOTO LIGHTBOX ============================== -->
+  <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo" hidden>
+    <div class="lb__backdrop" data-lb-close></div>
+    <figure class="lb__fig" id="lb-fig">
+      <div class="lb__frame" id="lb-frame"></div>
+      <figcaption class="lb__cap"><b id="lb-cap"></b><span class="mono" id="lb-meta"></span></figcaption>
+    </figure>
+    <button class="lb__btn lb__prev" type="button" data-lb-go="-1" aria-label="Previous photo">‹</button>
+    <button class="lb__btn lb__next" type="button" data-lb-go="1" aria-label="Next photo">›</button>
+    <button class="lb__btn lb__close" type="button" data-lb-close aria-label="Close">✕</button>
+    <p class="lb__count mono" id="lb-count"></p>
+  </div>
+
+  <!-- ============================== CHAPTER READER (project detail) ============================== -->
+  <div class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="reader-title" hidden>
+    <div class="reader__backdrop" data-close></div>
+    <article class="reader__page" id="reader-page" tabindex="-1"></article>
+  </div>
+
+  <noscript>
+    <div class="noscript">
+      <h2>Deepankar Patel</h2>
+      <p>Creative developer, UI/UX designer and AI builder. Enable JavaScript for the full interactive story, or reach me at
+      <a href="mailto:deepankarpatel28@gmail.com">deepankarpatel28@gmail.com</a> ·
+      <a href="https://github.com/dpp0007">GitHub</a> ·
+      <a href="https://www.linkedin.com/in/dpp07/">LinkedIn</a>.</p>
+    </div>
+  </noscript>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/preview.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
